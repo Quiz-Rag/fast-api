@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from enum import Enum
 
@@ -10,6 +10,7 @@ class JobStatus(str, Enum):
     PROCESSING = "processing"
     COMPLETED = "completed"
     FAILED = "failed"
+    PARTIALLY_COMPLETED = "partially_completed"
 
 
 class JobProgress(BaseModel):
@@ -18,6 +19,23 @@ class JobProgress(BaseModel):
     percentage: float = Field(ge=0, le=100)
     chunks_processed: int = 0
     total_chunks: int = 0
+
+
+class BatchFileInfo(BaseModel):
+    """Information about a single file in a batch."""
+    name: str
+    status: str  # pending, processing, completed, failed
+    chunks: int = 0
+    error: Optional[str] = None
+
+
+class BatchInfo(BaseModel):
+    """Batch processing information."""
+    total_files: int
+    processed_files: int
+    current_file: Optional[str] = None
+    overall_progress: float = Field(ge=0, le=100)
+    files: List[BatchFileInfo] = []
 
 
 class JobBase(BaseModel):
@@ -49,6 +67,8 @@ class Job(JobBase):
     progress: Optional[JobProgress] = None
     metadata: Optional[JobMetadata] = None
     error: Optional[str] = None
+    is_batch: bool = False
+    batch: Optional[BatchInfo] = None
 
     class Config:
         json_schema_extra = {

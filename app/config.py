@@ -28,6 +28,17 @@ class Settings(BaseSettings):
     # Job Configuration
     job_ttl: int = 86400  # 24 hours in seconds
 
+    # Database Configuration
+    db_path: str = "./app/data/quizzes.db"
+    
+    # Groq AI Configuration
+    groq_api_key: Optional[str] = None
+    groq_model: str = "llama-3.1-8b-instant"
+    
+    # Quiz Configuration
+    max_questions_per_quiz: int = 20
+    max_content_chunks: int = 15
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
