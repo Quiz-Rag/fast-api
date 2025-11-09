@@ -6,11 +6,11 @@ Handles job creation, status tracking, and progress updates.
 import json
 import uuid
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 import redis
 
 from app.config import settings
-from app.models.job import Job, JobStatus, JobProgress, JobMetadata
+from app.models.job import Job, JobStatus, JobProgress, JobMetadata, BatchInfo, BatchFileInfo
 
 
 class QueueManager:
@@ -108,8 +108,15 @@ class QueueManager:
         if job_dict.get("metadata"):
             job_dict["metadata"] = JobMetadata(**job_dict["metadata"])
 
+        # Convert batch dict to BatchInfo model
+        if job_dict.get("is_batch") and job_dict.get("batch"):
+            batch_data = job_dict["batch"]
+            batch_data["files"] = [BatchFileInfo(**f) for f in batch_data.get("files", [])]
+            job_dict["batch"] = BatchInfo(**batch_data)
+
         # Remove file_path from response (internal only)
         job_dict.pop("file_path", None)
+        job_dict.pop("file_paths", None)
 
         return Job(**job_dict)
 
@@ -225,6 +232,180 @@ class QueueManager:
 
         job_data = json.loads(data)
         return job_data.get("file_path")
+
+    def create_batch_job(
+        self,
+        files: List[Dict[str, str]],
+        collection_name: str
+    ) -> str:
+        """
+        Create a new batch job and store in Redis.
+
+        Args:
+            files: List of file dicts with 'path', 'name', 'type'
+            collection_name: ChromaDB collection name
+
+        Returns:
+            job_id: UUID of created batch job
+        """
+        job_id = str(uuid.uuid4())
+        created_at = datetime.utcnow().isoformat()
+
+        # Create file info list
+        batch_files = [
+            {
+                "name": f["name"],
+                "status": "pending",
+                "chunks": 0,
+                "error": None
+            }
+            for f in files
+        ]
+
+        job_data = {
+            "job_id": job_id,
+            "status": JobStatus.QUEUED.value,
+            "file_name": f"batch_{len(files)}_files",
+            "file_type": "batch",
+            "file_paths": [f["path"] for f in files],  # Store all file paths
+            "collection_name": collection_name,
+            "created_at": created_at,
+            "started_at": None,
+            "completed_at": None,
+            "progress": None,
+            "metadata": None,
+            "error": None,
+            "is_batch": True,
+            "batch": {
+                "total_files": len(files),
+                "processed_files": 0,
+                "current_file": None,
+                "overall_progress": 0.0,
+                "files": batch_files
+            }
+        }
+
+        # Store in Redis with TTL
+        key = self._get_job_key(job_id)
+        self.redis_client.setex(
+            key,
+            settings.job_ttl,
+            json.dumps(job_data)
+        )
+
+        return job_id
+
+    def update_batch_file_status(
+        self,
+        job_id: str,
+        file_name: str,
+        status: str,
+        chunks: int = 0,
+        error: Optional[str] = None
+    ) -> bool:
+        """
+        Update status of a specific file in batch job.
+
+        Args:
+            job_id: Job UUID
+            file_name: Name of the file to update
+            status: File status (pending, processing, completed, failed)
+            chunks: Number of chunks created (if completed)
+            error: Error message (if failed)
+
+        Returns:
+            True if updated successfully, False otherwise
+        """
+        key = self._get_job_key(job_id)
+        data = self.redis_client.get(key)
+
+        if not data:
+            return False
+
+        job_data = json.loads(data)
+        
+        if not job_data.get("is_batch"):
+            return False
+
+        # Update specific file
+        for file_info in job_data["batch"]["files"]:
+            if file_info["name"] == file_name:
+                file_info["status"] = status
+                file_info["chunks"] = chunks
+                if error:
+                    file_info["error"] = error
+                break
+
+        # Update current file
+        if status == "processing":
+            job_data["batch"]["current_file"] = file_name
+
+        # Update in Redis
+        self.redis_client.setex(
+            key,
+            settings.job_ttl,
+            json.dumps(job_data)
+        )
+
+        return True
+
+    def update_batch_progress(
+        self,
+        job_id: str,
+        processed_files: int
+    ) -> bool:
+        """
+        Update batch processing progress.
+
+        Args:
+            job_id: Job UUID
+            processed_files: Number of files completed
+
+        Returns:
+            True if updated successfully, False otherwise
+        """
+        key = self._get_job_key(job_id)
+        data = self.redis_client.get(key)
+
+        if not data:
+            return False
+
+        job_data = json.loads(data)
+        
+        if not job_data.get("is_batch"):
+            return False
+
+        total_files = job_data["batch"]["total_files"]
+        job_data["batch"]["processed_files"] = processed_files
+        job_data["batch"]["overall_progress"] = (processed_files / total_files) * 100
+
+        # Update in Redis
+        self.redis_client.setex(
+            key,
+            settings.job_ttl,
+            json.dumps(job_data)
+        )
+
+        return True
+
+    def get_batch_file_paths(self, job_id: str) -> Optional[List[str]]:
+        """
+        Get file paths for a batch job (internal use).
+
+        Args:
+            job_id: Job UUID
+
+        Returns:
+            List of file paths or None if not found
+        """
+        key = self._get_job_key(job_id)
+        data = self.redis_client.get(key)
+
+        if not data:
+            return None
+
+        job_data = json.loads(data)
+        return job_data.get("file_paths")
 
     def delete_job(self, job_id: str) -> bool:
         """

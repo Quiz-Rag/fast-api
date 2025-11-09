@@ -165,3 +165,185 @@ def process_document_task(self, job_id: str):
                 print(f"Cleaned up file: {file_path}")
             except Exception as cleanup_error:
                 print(f"Error cleaning up file {file_path}: {cleanup_error}")
+
+
+@celery_app.task(bind=True, max_retries=3)
+def process_batch_embedding_task(self, job_id: str, files: list, collection_name: str):
+    """
+    Background task to process multiple documents in batch.
+
+    Args:
+        job_id: UUID of the batch job
+        files: List of file dicts with 'path', 'name', 'type'
+        collection_name: ChromaDB collection name for all files
+
+    Returns:
+        Dictionary with batch processing results
+    """
+    start_time = time.time()
+    total_files = len(files)
+    successful_files = 0
+    failed_files = 0
+    results = []
+
+    try:
+        # Update status to processing
+        queue_manager.update_job_status(
+            job_id,
+            JobStatus.PROCESSING,
+            started_at=datetime.utcnow()
+        )
+
+        # Process each file
+        for idx, file_info in enumerate(files, 1):
+            file_name = file_info["name"]
+            file_path = file_info["path"]
+            file_type = file_info["type"]
+
+            try:
+                # Update current file status to processing
+                queue_manager.update_batch_file_status(
+                    job_id=job_id,
+                    file_name=file_name,
+                    status="processing"
+                )
+
+                print(f"Processing file {idx}/{total_files}: {file_name}")
+
+                # Step 1: Extract text
+                if file_type == "pdf":
+                    text = extract_text_from_pdf(file_path)
+                elif file_type == "pptx":
+                    text = extract_text_from_pptx(file_path)
+                else:
+                    raise ValueError(f"Unsupported file type: {file_type}")
+
+                if not text or len(text.strip()) == 0:
+                    raise ValueError("No text could be extracted from the document")
+
+                # Step 2: Chunk the text
+                docs = chunk_text(text)
+                total_chunks = len(docs)
+
+                # Step 3: Store in ChromaDB
+                store_in_chroma(docs, collection_name)
+
+                # Mark file as completed
+                queue_manager.update_batch_file_status(
+                    job_id=job_id,
+                    file_name=file_name,
+                    status="completed",
+                    chunks=total_chunks
+                )
+
+                successful_files += 1
+                results.append({
+                    "file": file_name,
+                    "status": "completed",
+                    "chunks": total_chunks
+                })
+
+                print(f"Successfully processed {file_name}: {total_chunks} chunks")
+
+            except Exception as file_error:
+                # Mark file as failed but continue with next file
+                error_message = str(file_error)
+                queue_manager.update_batch_file_status(
+                    job_id=job_id,
+                    file_name=file_name,
+                    status="failed",
+                    error=error_message
+                )
+
+                failed_files += 1
+                results.append({
+                    "file": file_name,
+                    "status": "failed",
+                    "error": error_message
+                })
+
+                print(f"Failed to process {file_name}: {error_message}")
+
+            finally:
+                # Clean up individual file
+                if os.path.exists(file_path):
+                    try:
+                        os.remove(file_path)
+                        print(f"Cleaned up file: {file_path}")
+                    except Exception as cleanup_error:
+                        print(f"Error cleaning up file {file_path}: {cleanup_error}")
+
+            # Update batch progress
+            queue_manager.update_batch_progress(
+                job_id=job_id,
+                processed_files=idx
+            )
+
+        # Calculate processing time
+        processing_time = time.time() - start_time
+
+        # Determine final status
+        if failed_files == 0:
+            final_status = JobStatus.COMPLETED
+            status_message = f"All {total_files} files processed successfully"
+        elif successful_files == 0:
+            final_status = JobStatus.FAILED
+            status_message = f"All {total_files} files failed to process"
+        else:
+            final_status = JobStatus.PARTIALLY_COMPLETED
+            status_message = f"{successful_files}/{total_files} files processed successfully"
+
+        # Calculate total chunks
+        total_chunks = sum(r.get("chunks", 0) for r in results if r["status"] == "completed")
+
+        # Mark batch as completed
+        metadata = {
+            "chunks_count": total_chunks,
+            "text_length": 0,  # Not tracked for batch
+            "processing_time_seconds": round(processing_time, 2)
+        }
+
+        queue_manager.update_job_status(
+            job_id,
+            final_status,
+            completed_at=datetime.utcnow(),
+            metadata=metadata,
+            error=None if failed_files == 0 else f"{failed_files} files failed"
+        )
+
+        print(f"Batch job {job_id} completed: {status_message}")
+
+        return {
+            "job_id": job_id,
+            "status": final_status.value,
+            "total_files": total_files,
+            "successful_files": successful_files,
+            "failed_files": failed_files,
+            "total_chunks": total_chunks,
+            "processing_time": processing_time,
+            "results": results
+        }
+
+    except Exception as e:
+        # Handle catastrophic batch errors
+        error_message = str(e)
+        
+        queue_manager.update_job_status(
+            job_id,
+            JobStatus.FAILED,
+            completed_at=datetime.utcnow(),
+            error=error_message
+        )
+
+        print(f"Catastrophic error in batch job {job_id}: {error_message}")
+
+        # Clean up any remaining files
+        for file_info in files:
+            file_path = file_info["path"]
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                except Exception:
+                    pass
+
+        raise

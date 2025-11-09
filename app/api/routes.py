@@ -10,9 +10,9 @@ from datetime import datetime
 import chromadb
 from chromadb.config import Settings as ChromaSettings
 
-from app.models.job import Job, JobResponse
+from app.models.job import Job, JobResponse, BatchFileInfo
 from app.services.queue_manager import queue_manager
-from app.workers.tasks import process_document_task
+from app.workers.tasks import process_document_task, process_batch_embedding_task
 from app.config import settings
 
 router = APIRouter()
@@ -111,6 +111,119 @@ async def start_embedding(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error creating job: {str(e)}"
+        )
+
+
+@router.post("/start-embedding-batch", response_model=JobResponse, status_code=status.HTTP_202_ACCEPTED)
+async def start_embedding_batch(
+    files: List[UploadFile] = File(..., description="Multiple PDF or PPTX files to process (2-10 files)"),
+    collection_name: Optional[str] = Form(None, description="ChromaDB collection name for all files")
+):
+    """
+    Upload multiple documents and start batch embedding process asynchronously.
+
+    Returns immediately with a job_id. Use the job-status endpoint to check progress.
+
+    - **files**: 2-10 document files to process (PDF or PPTX)
+    - **collection_name**: Optional name for the ChromaDB collection (defaults to 'batch_' + timestamp)
+
+    Returns:
+        Job ID and status for tracking the batch processing
+    """
+    # Validate file count
+    if len(files) < 2:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Minimum 2 files required for batch upload"
+        )
+    
+    if len(files) > 10:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Maximum 10 files allowed per batch"
+        )
+    
+    # Validate each file and calculate total size
+    total_size = 0
+    file_infos = []
+    
+    for file in files:
+        # Validate file type
+        file_ext = validate_file(file)
+        
+        # Track file size
+        file.file.seek(0, 2)  # Seek to end
+        file_size = file.file.tell()
+        file.file.seek(0)  # Seek back to start
+        
+        total_size += file_size
+        
+        # Check individual file size (50MB)
+        if file_size > settings.max_file_size:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"File '{file.filename}' exceeds {settings.max_file_size / (1024*1024)}MB limit"
+            )
+        
+        file_infos.append({
+            "filename": file.filename,
+            "file_type": file_ext,
+            "size": file_size
+        })
+    
+    # Check total batch size (200MB)
+    max_batch_size = 200 * 1024 * 1024
+    if total_size > max_batch_size:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Total batch size ({total_size / (1024*1024):.1f}MB) exceeds 200MB limit"
+        )
+    
+    # Set collection name (default to batch with timestamp)
+    if not collection_name:
+        collection_name = f"batch_{int(datetime.utcnow().timestamp())}"
+    
+    # Save uploaded files
+    saved_files = []
+    try:
+        for file in files:
+            temp_filename = f"{datetime.utcnow().timestamp()}_{file.filename}"
+            file_path = os.path.join(settings.upload_dir, temp_filename)
+            await save_upload_file(file, file_path)
+            
+            saved_files.append({
+                "path": file_path,
+                "name": file.filename,
+                "type": get_file_extension(file.filename)
+            })
+        
+        # Create batch job in Redis
+        job_id = queue_manager.create_batch_job(
+            files=saved_files,
+            collection_name=collection_name
+        )
+        
+        # Queue the batch processing task (Celery)
+        process_batch_embedding_task.delay(job_id, saved_files, collection_name)
+        
+        return JobResponse(
+            job_id=job_id,
+            status="queued",
+            message=f"Batch job created successfully for {len(files)} files. Use job_id to check status."
+        )
+    
+    except Exception as e:
+        # Clean up files if job creation fails
+        for file_info in saved_files:
+            if os.path.exists(file_info["path"]):
+                try:
+                    os.remove(file_info["path"])
+                except Exception:
+                    pass
+        
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error creating batch job: {str(e)}"
         )
 
 
