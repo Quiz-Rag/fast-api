@@ -3,12 +3,14 @@ Quiz service for generating and grading quizzes.
 """
 
 from sqlalchemy.orm import Session
-from app.models.database import Quiz, Question, QuestionType, QuizAttempt, UserAnswer
+from app.models.database import Quiz, Question, QuestionType, QuizAttempt, UserAnswer, DescriptiveGrading
 from app.models.quiz_schemas import *
 from app.services.chroma_service import ChromaService
 from app.services.ai_service import AIService
+from app.services.ai_grading_service import ai_grading_service
 from app.config import settings
 import json
+import asyncio
 from typing import List
 from datetime import datetime
 
@@ -21,13 +23,13 @@ class QuizService:
         self.chroma = ChromaService()
         self.ai = AIService()
     
-    async def _retrieve_content(self, topic: str, collection_name: Optional[str] = None) -> str:
-        """Retrieve relevant content from ChromaDB."""
+    async def _retrieve_content(self, topic: str) -> str:
+        """Retrieve relevant content from all ChromaDB collections."""
         try:
-            # Search ChromaDB for relevant content
+            # Search ChromaDB for relevant content (across all collections)
             results = self.chroma.search_documents(
                 query=topic,
-                collection_name=collection_name,
+                collection_name=None,  # Search all collections
                 n_results=settings.max_content_chunks
             )
             
@@ -56,8 +58,8 @@ class QuizService:
         Generate quiz and save to database.
         Returns quiz WITHOUT answers.
         """
-        # 1. Retrieve relevant content from ChromaDB
-        content = await self._retrieve_content(request.topic, request.collection_name)
+        # 1. Retrieve relevant content from ChromaDB (all collections)
+        content = await self._retrieve_content(request.topic)
         
         # 2. Generate quiz using AI
         ai_response = await self.ai.generate_quiz(
@@ -252,27 +254,59 @@ class QuizService:
                 explanation=question.explanation
             ))
         
-        # Descriptive questions - return for review (no auto-grading)
+        # Descriptive questions - AI-powered grading
         descriptive_results = []
+        descriptive_score = 0
+        max_descriptive_score = 0
         
         for desc_answer in submission.descriptive_answers:
             question = questions.get(desc_answer.question_id)
             if not question or question.question_type != QuestionType.DESCRIPTIVE:
                 continue
             
+            # Parse key points
+            key_points = json.loads(question.key_points) if question.key_points else []
+            
+            # Grade using AI
+            grading_result = asyncio.run(
+                ai_grading_service.grade_descriptive_answer(
+                    question=question.question_text,
+                    expected_answer=question.sample_answer or "",
+                    user_answer=desc_answer.answer,
+                    key_points=key_points
+                )
+            )
+            
+            # Add to descriptive score if AI grading succeeded
+            if grading_result.get("is_ai_graded") and grading_result.get("score") is not None:
+                descriptive_score += grading_result["score"]
+                max_descriptive_score += 100
+            
+            # Create result with AI grading details
             descriptive_results.append(DescriptiveResult(
                 question_id=question.id,
                 question=question.question_text,
                 your_answer=desc_answer.answer,
-                sample_answer=question.sample_answer,
-                key_points=json.loads(question.key_points) if question.key_points else [],
-                explanation=question.explanation
+                sample_answer=question.sample_answer or "",
+                key_points=key_points,
+                explanation=question.explanation or "",
+                score=grading_result.get("score"),
+                max_score=100,
+                breakdown=DescriptiveScoreBreakdown(**grading_result.get("breakdown", {})) if grading_result.get("breakdown") else None,
+                points_covered=grading_result.get("points_covered", []),
+                points_missed=grading_result.get("points_missed", []),
+                extra_content=grading_result.get("extra_content", []),
+                feedback=grading_result.get("feedback", ""),
+                suggestions=grading_result.get("suggestions", []),
+                is_ai_graded=grading_result.get("is_ai_graded", False)
             ))
         
-        # Calculate total score
-        total_auto_score = mcq_score + blank_score
+        # Calculate total scores including descriptive
+        total_auto_score = mcq_score + blank_score  # For backward compatibility
         max_auto_score = quiz.num_mcq + quiz.num_blanks
-        percentage = (total_auto_score / max_auto_score * 100) if max_auto_score > 0 else 0
+        total_score = mcq_score + blank_score + descriptive_score
+        max_score = quiz.num_mcq + quiz.num_blanks + max_descriptive_score
+        percentage = (total_score / max_score * 100) if max_score > 0 else 0
         
         # Save attempt to database
         attempt = QuizAttempt(
@@ -281,8 +315,9 @@ class QuizService:
             user_name=submission.user_name,
             mcq_score=mcq_score,
             blank_score=blank_score,
-            total_score=total_auto_score,
-            max_score=max_auto_score,
+            descriptive_score=descriptive_score,
+            total_score=total_score,
+            max_score=max_score,
             percentage=round(percentage, 2),
             time_taken_seconds=submission.time_taken_seconds,
             mcq_answers_json=json.dumps([ans.dict() for ans in submission.mcq_answers]),
@@ -317,16 +352,40 @@ class QuizService:
                 )
                 db.add(user_answer)
         
-        for desc_answer in submission.descriptive_answers:
+        # Save descriptive answers with AI grading
+        for idx, desc_answer in enumerate(submission.descriptive_answers):
             question = questions.get(desc_answer.question_id)
             if question and question.question_type == QuestionType.DESCRIPTIVE:
                 user_answer = UserAnswer(
                     attempt_id=attempt.id,
                     question_id=question.id,
                     text_answer=desc_answer.answer,
-                    is_correct=None  # Descriptive answers need manual grading
+                    is_correct=None  # Not applicable for descriptive
                 )
                 db.add(user_answer)
+                db.flush()  # Get user_answer ID
+                
+                # Save AI grading details
+                if idx < len(descriptive_results):
+                    result = descriptive_results[idx]
+                    if result.is_ai_graded and result.score is not None:
+                        ai_grading = DescriptiveGrading(
+                            user_answer_id=user_answer.id,
+                            total_score=result.score,
+                            content_coverage_score=result.breakdown.content_coverage_score if result.breakdown else 0,
+                            accuracy_score=result.breakdown.accuracy_score if result.breakdown else 0,
+                            clarity_score=result.breakdown.clarity_score if result.breakdown else 0,
+                            extra_content_penalty=result.breakdown.extra_content_penalty if result.breakdown else 0,
+                            points_covered=json.dumps(result.points_covered),
+                            points_missed=json.dumps(result.points_missed),
+                            extra_content=json.dumps(result.extra_content),
+                            feedback=result.feedback,
+                            suggestions=json.dumps(result.suggestions),
+                            model_used=settings.groq_model,
+                            is_ai_graded=True,
+                            graded_at=datetime.utcnow()
+                        )
+                        db.add(ai_grading)
         
         db.commit()
         db.refresh(attempt)
@@ -341,8 +400,11 @@ class QuizService:
             descriptive_results=descriptive_results,
             mcq_score=mcq_score,
             blank_score=blank_score,
+            descriptive_score=descriptive_score,
             total_auto_score=total_auto_score,
+            total_score=total_score,
             max_auto_score=max_auto_score,
+            max_score=max_score,
             percentage=round(percentage, 2),
             time_taken_seconds=submission.time_taken_seconds,
             submitted_at=attempt.submitted_at.isoformat()

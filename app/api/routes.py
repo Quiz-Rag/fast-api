@@ -54,8 +54,7 @@ async def save_upload_file(upload_file: UploadFile, destination: str) -> None:
 
 @router.post("/start-embedding", response_model=JobResponse, status_code=status.HTTP_202_ACCEPTED)
 async def start_embedding(
-    file: UploadFile = File(..., description="PDF or PPTX file to process"),
-    collection_name: Optional[str] = Form(None, description="ChromaDB collection name")
+    file: UploadFile = File(..., description="PDF or PPTX file to process")
 ):
     """
     Upload a document and start embedding process asynchronously.
@@ -63,17 +62,17 @@ async def start_embedding(
     Returns immediately with a job_id. Use the job-status endpoint to check progress.
 
     - **file**: The document file to process (PDF or PPTX)
-    - **collection_name**: Optional name for the ChromaDB collection (defaults to filename)
 
     Returns:
         Job ID and status for tracking the processing
+    
+    Note: Collection name is automatically generated from the filename.
     """
     # Validate file
     file_ext = validate_file(file)
 
-    # Set collection name (default to filename without extension)
-    if not collection_name:
-        collection_name = file.filename.rsplit(".", 1)[0].replace(" ", "_").lower()
+    # Auto-generate collection name from filename
+    collection_name = file.filename.rsplit(".", 1)[0].replace(" ", "_").lower()
 
     # Generate unique filename for storage
     temp_filename = f"{datetime.utcnow().timestamp()}_{file.filename}"
@@ -116,8 +115,7 @@ async def start_embedding(
 
 @router.post("/start-embedding-batch", response_model=JobResponse, status_code=status.HTTP_202_ACCEPTED)
 async def start_embedding_batch(
-    files: List[UploadFile] = File(..., description="Multiple PDF or PPTX files to process (2-10 files)"),
-    collection_name: Optional[str] = Form(None, description="ChromaDB collection name for all files")
+    files: List[UploadFile] = File(..., description="Multiple PDF or PPTX files to process (2-10 files)")
 ):
     """
     Upload multiple documents and start batch embedding process asynchronously.
@@ -125,10 +123,11 @@ async def start_embedding_batch(
     Returns immediately with a job_id. Use the job-status endpoint to check progress.
 
     - **files**: 2-10 document files to process (PDF or PPTX)
-    - **collection_name**: Optional name for the ChromaDB collection (defaults to 'batch_' + timestamp)
 
     Returns:
         Job ID and status for tracking the batch processing
+    
+    Note: Collection name is automatically generated with timestamp (e.g., 'batch_1699532400').
     """
     # Validate file count
     if len(files) < 2:
@@ -179,9 +178,8 @@ async def start_embedding_batch(
             detail=f"Total batch size ({total_size / (1024*1024):.1f}MB) exceeds 200MB limit"
         )
     
-    # Set collection name (default to batch with timestamp)
-    if not collection_name:
-        collection_name = f"batch_{int(datetime.utcnow().timestamp())}"
+    # Auto-generate collection name with timestamp
+    collection_name = f"batch_{int(datetime.utcnow().timestamp())}"
     
     # Save uploaded files
     saved_files = []

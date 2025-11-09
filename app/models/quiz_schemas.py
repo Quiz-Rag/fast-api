@@ -17,7 +17,6 @@ class QuizGenerateRequest(BaseModel):
     num_blanks: int = Field(..., ge=0, description="Number of fill-in-the-blank questions")
     num_descriptive: int = Field(..., ge=0, description="Number of descriptive questions")
     difficulty: Optional[str] = Field("medium", pattern="^(easy|medium|hard)$")
-    collection_name: Optional[str] = Field(None, description="ChromaDB collection to search in")
     
     @model_validator(mode='after')
     def validate_question_sum(self):
@@ -126,14 +125,33 @@ class BlankResult(BaseModel):
     explanation: str
 
 
+class DescriptiveScoreBreakdown(BaseModel):
+    """Breakdown of descriptive answer score."""
+    content_coverage_score: int = 0  # 0-70
+    accuracy_score: int = 0          # 0-20
+    clarity_score: int = 0           # 0-10
+    extra_content_penalty: int = 0   # 0 or negative
+
+
 class DescriptiveResult(BaseModel):
-    """Descriptive grading result."""
+    """Descriptive grading result with AI grading."""
     question_id: int
     question: str
     your_answer: str
     sample_answer: str
-    key_points: List[str]
+    key_points: List[str] = []
     explanation: str
+    
+    # AI Grading fields
+    score: Optional[int] = None  # 0-100, None if not graded
+    max_score: int = 100
+    breakdown: Optional[DescriptiveScoreBreakdown] = None
+    points_covered: List[str] = []
+    points_missed: List[str] = []
+    extra_content: List[str] = []
+    feedback: str = ""
+    suggestions: List[str] = []
+    is_ai_graded: bool = False
 
 
 class QuizGradingResponse(BaseModel):
@@ -145,11 +163,19 @@ class QuizGradingResponse(BaseModel):
     mcq_results: List[MCQResult]
     blank_results: List[BlankResult]
     descriptive_results: List[DescriptiveResult]
+    
+    # Individual scores
     mcq_score: int
     blank_score: int
-    total_auto_score: int
-    max_auto_score: int
-    percentage: float
+    descriptive_score: int = 0  # AI-graded descriptive score
+    
+    # Totals
+    total_auto_score: int  # MCQ + Blanks only (for backward compatibility)
+    total_score: int  # MCQ + Blanks + Descriptive
+    max_auto_score: int  # Max for MCQ + Blanks
+    max_score: int  # Max including descriptive
+    percentage: float  # Based on total_score/max_score
+    
     time_taken_seconds: Optional[int] = None
     submitted_at: str
 
@@ -173,6 +199,7 @@ class QuizAttemptSummary(BaseModel):
     user_name: Optional[str] = None
     mcq_score: int
     blank_score: int
+    descriptive_score: int = 0
     total_score: int
     max_score: int
     percentage: float
@@ -189,6 +216,7 @@ class QuizAttemptDetail(BaseModel):
     user_name: Optional[str] = None
     mcq_score: int
     blank_score: int
+    descriptive_score: int = 0
     total_score: int
     max_score: int
     percentage: float
