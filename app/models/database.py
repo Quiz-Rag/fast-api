@@ -23,6 +23,11 @@ class Quiz(Base):
     __tablename__ = "quizzes"
     
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    
+    # Natural language description (new)
+    quiz_description = Column(Text, nullable=True)
+    
+    # Structured fields (for backward compatibility)
     topic = Column(String(255), nullable=False, index=True)
     total_questions = Column(Integer, nullable=False)
     num_mcq = Column(Integer, nullable=False)
@@ -84,6 +89,7 @@ class QuizAttempt(Base):
     # Scores
     mcq_score = Column(Integer, default=0)
     blank_score = Column(Integer, default=0)
+    descriptive_score = Column(Integer, default=0)  # AI-graded descriptive score
     total_score = Column(Integer, default=0)
     max_score = Column(Integer, nullable=False)
     percentage = Column(Float, nullable=False)
@@ -122,3 +128,34 @@ class UserAnswer(Base):
     # Relationships
     attempt = relationship("QuizAttempt", back_populates="user_answers")
     question = relationship("Question")
+    ai_grading = relationship("DescriptiveGrading", back_populates="user_answer", uselist=False, cascade="all, delete-orphan")
+
+
+class DescriptiveGrading(Base):
+    """AI grading details for descriptive answers."""
+    __tablename__ = "descriptive_gradings"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    user_answer_id = Column(Integer, ForeignKey("user_answers.id", ondelete="CASCADE"), nullable=False, unique=True, index=True)
+    
+    # Scores
+    total_score = Column(Integer, nullable=False)  # 0-100
+    content_coverage_score = Column(Integer, default=0)  # 0-70
+    accuracy_score = Column(Integer, default=0)  # 0-20
+    clarity_score = Column(Integer, default=0)  # 0-10
+    extra_content_penalty = Column(Integer, default=0)  # negative or 0
+    
+    # Analysis (stored as JSON strings)
+    points_covered = Column(Text, nullable=True)  # JSON array
+    points_missed = Column(Text, nullable=True)  # JSON array
+    extra_content = Column(Text, nullable=True)  # JSON array
+    feedback = Column(Text, nullable=True)
+    suggestions = Column(Text, nullable=True)  # JSON array
+    
+    # Metadata
+    graded_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    model_used = Column(String(100), nullable=True)  # e.g., "llama-3.1-8b-instant"
+    is_ai_graded = Column(Boolean, default=True)  # False if manual grading needed
+    
+    # Relationships
+    user_answer = relationship("UserAnswer", back_populates="ai_grading")

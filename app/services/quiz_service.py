@@ -3,14 +3,21 @@ Quiz service for generating and grading quizzes.
 """
 
 from sqlalchemy.orm import Session
-from app.models.database import Quiz, Question, QuestionType, QuizAttempt, UserAnswer
+from app.models.database import Quiz, Question, QuestionType, QuizAttempt, UserAnswer, DescriptiveGrading
 from app.models.quiz_schemas import *
 from app.services.chroma_service import ChromaService
 from app.services.ai_service import AIService
+from app.services.ai_grading_service import ai_grading_service
+from app.security.input_sanitizer import sanitize_quiz_description
 from app.config import settings
+from fastapi import HTTPException
 import json
+import asyncio
 from typing import List
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class QuizService:
@@ -21,31 +28,65 @@ class QuizService:
         self.chroma = ChromaService()
         self.ai = AIService()
     
-    async def _retrieve_content(self, topic: str, collection_name: Optional[str] = None) -> str:
-        """Retrieve relevant content from ChromaDB."""
+    async def _retrieve_content(self, topic: str) -> str:
+        """
+        Retrieve top 20 most relevant documents from ChromaDB.
+        Let the LLM handle content validation and relevance filtering.
+        
+        Args:
+            topic: Topic to search for
+            
+        Returns:
+            Combined content from top documents
+            
+        Raises:
+            HTTPException: If no documents found at all
+        """
         try:
-            # Search ChromaDB for relevant content
+            # Clean query for better embedding
+            import re
+            # Remove parentheses and special chars, keep alphanumeric and spaces
+            clean_topic = re.sub(r'[^\w\s]', ' ', topic)
+            clean_topic = ' '.join(clean_topic.split())  # Normalize whitespace
+            
+            logger.info(f"Searching for topic: '{topic}' (cleaned: '{clean_topic}')")
+            
+            # Get top 20 documents - ChromaDB's embedding model handles similarity
             results = self.chroma.search_documents(
-                query=topic,
-                collection_name=collection_name,
-                n_results=settings.max_content_chunks
+                query=clean_topic,
+                collection_name=None,  # Search all collections
+                n_results=20  # Get top 20, let LLM decide what's relevant
             )
             
             if not results or not results.get('documents') or len(results['documents'][0]) == 0:
-                raise ValueError(f"No content found for topic: {topic}")
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"I don't have any course material in the database. Please upload relevant documents first."
+                )
             
-            # Combine all retrieved documents
-            content = "\n\n".join(results['documents'][0])
+            documents = results['documents'][0]
+            logger.info(f"Retrieved {len(documents)} documents from ChromaDB")
             
-            # Limit content length (approximately 3000 words)
+            # Combine all documents - no filtering, let LLM handle it
+            content = "\n\n".join(documents)
+            
+            # Limit content length (approximately 3000 words for LLM context)
             words = content.split()
             if len(words) > 3000:
                 content = " ".join(words[:3000])
+                logger.info(f"Content truncated to 3000 words for LLM context")
             
+            logger.info(f"✓ Passing {len(documents)} documents to LLM for validation")
             return content
             
+        except HTTPException:
+            raise  # Re-raise HTTP exceptions as-is
         except Exception as e:
-            raise Exception(f"Failed to retrieve content: {str(e)}")
+            logger.error(f"Failed to retrieve content: {str(e)}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to retrieve course content: {str(e)}"
+            )
     
     async def generate_quiz(
         self,
@@ -54,29 +95,92 @@ class QuizService:
     ) -> QuizResponse:
         """
         Generate quiz and save to database.
+        Supports both natural language and structured input.
         Returns quiz WITHOUT answers.
-        """
-        # 1. Retrieve relevant content from ChromaDB
-        content = await self._retrieve_content(request.topic, request.collection_name)
         
-        # 2. Generate quiz using AI
+        Raises:
+            HTTPException: For various error conditions (404, 400, 500)
+        """
+        # Determine mode and parse if needed
+        if request.quiz_description:
+            # Sanitize input to prevent prompt injection
+            sanitized_description = sanitize_quiz_description(request.quiz_description)
+            
+            if not sanitized_description or len(sanitized_description) < 10:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Quiz description is too short or contains only invalid characters. "
+                           "Please provide a meaningful description of the quiz you want."
+                )
+            
+            # Natural language mode - parse description
+            parsed = await self.ai.parse_quiz_description(
+                sanitized_description,
+                request.difficulty or "medium"
+            )
+            
+            # Check if AI detected out-of-scope topic
+            if "error" in parsed:
+                error_type = parsed.get("error")
+                message = parsed.get("message", "Invalid quiz request")
+                
+                if error_type == "out_of_scope":
+                    raise HTTPException(status_code=400, detail=message)
+                else:
+                    raise HTTPException(status_code=400, detail=message)
+            
+            # Use parsed values
+            topic = parsed["topic"]
+            total_questions = parsed["total_questions"]
+            num_mcq = parsed["num_mcq"]
+            num_blanks = parsed["num_blanks"]
+            num_descriptive = parsed["num_descriptive"]
+            difficulty = request.difficulty or "medium"
+            quiz_description = sanitized_description
+        else:
+            # Structured mode - use provided values
+            topic = request.topic
+            total_questions = request.total_questions
+            num_mcq = request.num_mcq
+            num_blanks = request.num_blanks
+            num_descriptive = request.num_descriptive
+            difficulty = request.difficulty or "medium"
+            quiz_description = None
+        
+        # 1. Retrieve relevant content from ChromaDB (with threshold filtering)
+        content = await self._retrieve_content(topic)
+        
+        # 2. Generate quiz using AI (with security boundaries)
         ai_response = await self.ai.generate_quiz(
-            topic=request.topic,
+            topic=topic,
             content=content,
-            num_mcq=request.num_mcq,
-            num_blanks=request.num_blanks,
-            num_descriptive=request.num_descriptive,
-            difficulty=request.difficulty
+            num_mcq=num_mcq,
+            num_blanks=num_blanks,
+            num_descriptive=num_descriptive,
+            difficulty=difficulty
         )
         
-        # 3. Create quiz in database
+        # 3. Check if AI returned an error
+        if isinstance(ai_response, dict) and "error" in ai_response:
+            error_type = ai_response.get("error")
+            message = ai_response.get("message", "Failed to generate quiz")
+            
+            if error_type == "insufficient_content":
+                raise HTTPException(status_code=404, detail=message)
+            elif error_type == "out_of_scope":
+                raise HTTPException(status_code=400, detail=message)
+            else:
+                raise HTTPException(status_code=500, detail=message)
+        
+        # 4. Create quiz in database
         quiz_db = Quiz(
-            topic=request.topic,
-            total_questions=request.total_questions,
-            num_mcq=request.num_mcq,
-            num_blanks=request.num_blanks,
-            num_descriptive=request.num_descriptive,
-            difficulty=request.difficulty
+            quiz_description=quiz_description,
+            topic=topic,
+            total_questions=total_questions,
+            num_mcq=num_mcq,
+            num_blanks=num_blanks,
+            num_descriptive=num_descriptive,
+            difficulty=difficulty
         )
         db.add(quiz_db)
         db.flush()  # Get quiz ID
@@ -107,7 +211,7 @@ class QuizService:
                 quiz_id=quiz_db.id,
                 question_type=QuestionType.BLANK,
                 question_text=blank['question'],
-                question_order=request.num_mcq + idx + 1,
+                question_order=num_mcq + idx + 1,
                 correct_answer=blank['answer'],
                 explanation=blank['explanation']
             )
@@ -119,7 +223,7 @@ class QuizService:
                 quiz_id=quiz_db.id,
                 question_type=QuestionType.DESCRIPTIVE,
                 question_text=desc['question'],
-                question_order=request.num_mcq + request.num_blanks + idx + 1,
+                question_order=num_mcq + num_blanks + idx + 1,
                 sample_answer=desc['sample_answer'],
                 key_points=json.dumps(desc['key_points']),
                 explanation=desc['explanation']
@@ -166,6 +270,7 @@ class QuizService:
         
         return QuizResponse(
             quiz_id=quiz_db.id,
+            quiz_description=quiz_db.quiz_description,
             topic=quiz_db.topic,
             total_questions=quiz_db.total_questions,
             num_mcq=quiz_db.num_mcq,
@@ -178,7 +283,7 @@ class QuizService:
             created_at=quiz_db.created_at.isoformat()
         )
     
-    def grade_quiz(
+    async def grade_quiz(
         self,
         submission: QuizSubmission,
         db: Session
@@ -252,27 +357,57 @@ class QuizService:
                 explanation=question.explanation
             ))
         
-        # Descriptive questions - return for review (no auto-grading)
+        # Descriptive questions - AI-powered grading
         descriptive_results = []
+        descriptive_score = 0
+        max_descriptive_score = 0
         
         for desc_answer in submission.descriptive_answers:
             question = questions.get(desc_answer.question_id)
             if not question or question.question_type != QuestionType.DESCRIPTIVE:
                 continue
             
+            # Parse key points
+            key_points = json.loads(question.key_points) if question.key_points else []
+            
+            # Grade using AI
+            grading_result = await ai_grading_service.grade_descriptive_answer(
+                question=question.question_text,
+                expected_answer=question.sample_answer or "",
+                user_answer=desc_answer.answer,
+                key_points=key_points
+            )
+            
+            # Add to descriptive score if AI grading succeeded
+            if grading_result.get("is_ai_graded") and grading_result.get("score") is not None:
+                descriptive_score += grading_result["score"]
+                max_descriptive_score += 100
+            
+            # Create result with AI grading details
             descriptive_results.append(DescriptiveResult(
                 question_id=question.id,
                 question=question.question_text,
                 your_answer=desc_answer.answer,
-                sample_answer=question.sample_answer,
-                key_points=json.loads(question.key_points) if question.key_points else [],
-                explanation=question.explanation
+                sample_answer=question.sample_answer or "",
+                key_points=key_points,
+                explanation=question.explanation or "",
+                score=grading_result.get("score"),
+                max_score=100,
+                breakdown=DescriptiveScoreBreakdown(**grading_result.get("breakdown", {})) if grading_result.get("breakdown") else None,
+                points_covered=grading_result.get("points_covered", []),
+                points_missed=grading_result.get("points_missed", []),
+                extra_content=grading_result.get("extra_content", []),
+                feedback=grading_result.get("feedback", ""),
+                suggestions=grading_result.get("suggestions", []),
+                is_ai_graded=grading_result.get("is_ai_graded", False)
             ))
         
-        # Calculate total score
-        total_auto_score = mcq_score + blank_score
+        # Calculate total scores including descriptive
+        total_auto_score = mcq_score + blank_score  # For backward compatibility
         max_auto_score = quiz.num_mcq + quiz.num_blanks
-        percentage = (total_auto_score / max_auto_score * 100) if max_auto_score > 0 else 0
+        total_score = mcq_score + blank_score + descriptive_score
+        max_score = quiz.num_mcq + quiz.num_blanks + max_descriptive_score
+        percentage = (total_score / max_score * 100) if max_score > 0 else 0
         
         # Save attempt to database
         attempt = QuizAttempt(
@@ -281,8 +416,9 @@ class QuizService:
             user_name=submission.user_name,
             mcq_score=mcq_score,
             blank_score=blank_score,
-            total_score=total_auto_score,
-            max_score=max_auto_score,
+            descriptive_score=descriptive_score,
+            total_score=total_score,
+            max_score=max_score,
             percentage=round(percentage, 2),
             time_taken_seconds=submission.time_taken_seconds,
             mcq_answers_json=json.dumps([ans.dict() for ans in submission.mcq_answers]),
@@ -317,16 +453,40 @@ class QuizService:
                 )
                 db.add(user_answer)
         
-        for desc_answer in submission.descriptive_answers:
+        # Save descriptive answers with AI grading
+        for idx, desc_answer in enumerate(submission.descriptive_answers):
             question = questions.get(desc_answer.question_id)
             if question and question.question_type == QuestionType.DESCRIPTIVE:
                 user_answer = UserAnswer(
                     attempt_id=attempt.id,
                     question_id=question.id,
                     text_answer=desc_answer.answer,
-                    is_correct=None  # Descriptive answers need manual grading
+                    is_correct=None  # Not applicable for descriptive
                 )
                 db.add(user_answer)
+                db.flush()  # Get user_answer ID
+                
+                # Save AI grading details
+                if idx < len(descriptive_results):
+                    result = descriptive_results[idx]
+                    if result.is_ai_graded and result.score is not None:
+                        ai_grading = DescriptiveGrading(
+                            user_answer_id=user_answer.id,
+                            total_score=result.score,
+                            content_coverage_score=result.breakdown.content_coverage_score if result.breakdown else 0,
+                            accuracy_score=result.breakdown.accuracy_score if result.breakdown else 0,
+                            clarity_score=result.breakdown.clarity_score if result.breakdown else 0,
+                            extra_content_penalty=result.breakdown.extra_content_penalty if result.breakdown else 0,
+                            points_covered=json.dumps(result.points_covered),
+                            points_missed=json.dumps(result.points_missed),
+                            extra_content=json.dumps(result.extra_content),
+                            feedback=result.feedback,
+                            suggestions=json.dumps(result.suggestions),
+                            model_used=settings.groq_model,
+                            is_ai_graded=True,
+                            graded_at=datetime.utcnow()
+                        )
+                        db.add(ai_grading)
         
         db.commit()
         db.refresh(attempt)
@@ -341,8 +501,11 @@ class QuizService:
             descriptive_results=descriptive_results,
             mcq_score=mcq_score,
             blank_score=blank_score,
+            descriptive_score=descriptive_score,
             total_auto_score=total_auto_score,
+            total_score=total_score,
             max_auto_score=max_auto_score,
+            max_score=max_score,
             percentage=round(percentage, 2),
             time_taken_seconds=submission.time_taken_seconds,
             submitted_at=attempt.submitted_at.isoformat()

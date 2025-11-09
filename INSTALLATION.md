@@ -472,7 +472,7 @@ pip install fastapi uvicorn
 3. Restart Celery worker:
    ```bash
    Ctrl + C
-   celery -A app.workers.celery_app worker --loglevel=info
+   celery -A app.workers.celery_app worker --loglevel=info --pool=solo
    ```
 
 ---

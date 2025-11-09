@@ -8,8 +8,10 @@ from app.db.database import get_db
 from app.services.quiz_service import QuizService
 from app.models.quiz_schemas import *
 from typing import List
+import logging
 
 router = APIRouter(prefix="/quiz", tags=["quiz"])
+logger = logging.getLogger(__name__)
 
 
 @router.post("/generate", response_model=QuizResponse, status_code=status.HTTP_201_CREATED)
@@ -18,22 +20,41 @@ async def generate_quiz(
     db: Session = Depends(get_db)
 ):
     """
-    Generate a quiz on a specific topic.
+    Generate a quiz on a specific topic with AI-powered security.
     
+    **Features:**
+    - Natural language quiz descriptions or structured parameters
     - Retrieves relevant content from ChromaDB based on topic
     - Uses Groq AI to generate questions
     - Saves quiz to database with answers
     - Returns questions WITHOUT answers to frontend
+    
+    **Security:**
+    - Input sanitization to prevent prompt injection
+    - Restricted to Network Security topics only
+    - Requires sufficient course material (similarity threshold 0.6)
+    - Minimum 3 relevant documents required
+    
+    **Error Responses:**
+    - 400: Out of scope topic or invalid request
+    - 404: Insufficient course material
+    - 500: Internal server error
     
     **Note:** Answers are stored server-side and only revealed after submission.
     """
     try:
         quiz_service = QuizService()
         return await quiz_service.generate_quiz(request, db)
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except HTTPException:
+        # Re-raise HTTPException from service layer (already has proper status and detail)
+        raise
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        # Log unexpected errors
+        logger.error(f"Unexpected error in generate_quiz: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred while generating the quiz. Please try again."
+        )
 
 
 @router.post("/submit", response_model=QuizGradingResponse)
@@ -47,12 +68,12 @@ async def submit_quiz(
     - Takes quiz_id and answers for all questions
     - Compares with correct answers stored in database
     - Auto-grades MCQ and fill-in-the-blank questions
-    - Returns descriptive question answers for manual review
+    - AI-grades descriptive questions with detailed feedback
     - Provides detailed explanations for all questions
     """
     try:
         quiz_service = QuizService()
-        return quiz_service.grade_quiz(submission, db)
+        return await quiz_service.grade_quiz(submission, db)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except Exception as e:
