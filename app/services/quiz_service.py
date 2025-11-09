@@ -180,7 +180,7 @@ class QuizService:
             created_at=quiz_db.created_at.isoformat()
         )
     
-    def grade_quiz(
+    async def grade_quiz(
         self,
         submission: QuizSubmission,
         db: Session
@@ -268,13 +268,11 @@ class QuizService:
             key_points = json.loads(question.key_points) if question.key_points else []
             
             # Grade using AI
-            grading_result = asyncio.run(
-                ai_grading_service.grade_descriptive_answer(
-                    question=question.question_text,
-                    expected_answer=question.sample_answer or "",
-                    user_answer=desc_answer.answer,
-                    key_points=key_points
-                )
+            grading_result = await ai_grading_service.grade_descriptive_answer(
+                question=question.question_text,
+                expected_answer=question.sample_answer or "",
+                user_answer=desc_answer.answer,
+                key_points=key_points
             )
             
             # Add to descriptive score if AI grading succeeded

@@ -47,12 +47,12 @@ async def submit_quiz(
     - Takes quiz_id and answers for all questions
     - Compares with correct answers stored in database
     - Auto-grades MCQ and fill-in-the-blank questions
-    - Returns descriptive question answers for manual review
+    - AI-grades descriptive questions with detailed feedback
     - Provides detailed explanations for all questions
     """
     try:
         quiz_service = QuizService()
-        return quiz_service.grade_quiz(submission, db)
+        return await quiz_service.grade_quiz(submission, db)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except Exception as e:
