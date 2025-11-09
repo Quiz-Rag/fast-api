@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     # Quiz Configuration
     max_questions_per_quiz: int = 20
     max_content_chunks: int = 15
+    
+    # Vector DB Security Settings
+    vector_db_similarity_threshold: float = 0.6  # Minimum similarity score (0.0-1.0)
+    vector_db_min_results: int = 3  # Minimum documents required to generate quiz
 
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -23,6 +23,11 @@ class Quiz(Base):
     __tablename__ = "quizzes"
     
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    
+    # Natural language description (new)
+    quiz_description = Column(Text, nullable=True)
+    
+    # Structured fields (for backward compatibility)
     topic = Column(String(255), nullable=False, index=True)
     total_questions = Column(Integer, nullable=False)
     num_mcq = Column(Integer, nullable=False)

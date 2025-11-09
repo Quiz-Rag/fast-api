@@ -8,11 +8,16 @@ from app.models.quiz_schemas import *
 from app.services.chroma_service import ChromaService
 from app.services.ai_service import AIService
 from app.services.ai_grading_service import ai_grading_service
+from app.security.input_sanitizer import sanitize_quiz_description
 from app.config import settings
+from fastapi import HTTPException
 import json
 import asyncio
 from typing import List
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class QuizService:
@@ -24,30 +29,64 @@ class QuizService:
         self.ai = AIService()
     
     async def _retrieve_content(self, topic: str) -> str:
-        """Retrieve relevant content from all ChromaDB collections."""
+        """
+        Retrieve top 20 most relevant documents from ChromaDB.
+        Let the LLM handle content validation and relevance filtering.
+        
+        Args:
+            topic: Topic to search for
+            
+        Returns:
+            Combined content from top documents
+            
+        Raises:
+            HTTPException: If no documents found at all
+        """
         try:
-            # Search ChromaDB for relevant content (across all collections)
+            # Clean query for better embedding
+            import re
+            # Remove parentheses and special chars, keep alphanumeric and spaces
+            clean_topic = re.sub(r'[^\w\s]', ' ', topic)
+            clean_topic = ' '.join(clean_topic.split())  # Normalize whitespace
+            
+            logger.info(f"Searching for topic: '{topic}' (cleaned: '{clean_topic}')")
+            
+            # Get top 20 documents - ChromaDB's embedding model handles similarity
             results = self.chroma.search_documents(
-                query=topic,
+                query=clean_topic,
                 collection_name=None,  # Search all collections
-                n_results=settings.max_content_chunks
+                n_results=20  # Get top 20, let LLM decide what's relevant
             )
             
             if not results or not results.get('documents') or len(results['documents'][0]) == 0:
-                raise ValueError(f"No content found for topic: {topic}")
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"I don't have any course material in the database. Please upload relevant documents first."
+                )
             
-            # Combine all retrieved documents
-            content = "\n\n".join(results['documents'][0])
+            documents = results['documents'][0]
+            logger.info(f"Retrieved {len(documents)} documents from ChromaDB")
             
-            # Limit content length (approximately 3000 words)
+            # Combine all documents - no filtering, let LLM handle it
+            content = "\n\n".join(documents)
+            
+            # Limit content length (approximately 3000 words for LLM context)
             words = content.split()
             if len(words) > 3000:
                 content = " ".join(words[:3000])
+                logger.info(f"Content truncated to 3000 words for LLM context")
             
+            logger.info(f"✓ Passing {len(documents)} documents to LLM for validation")
             return content
             
+        except HTTPException:
+            raise  # Re-raise HTTP exceptions as-is
         except Exception as e:
-            raise Exception(f"Failed to retrieve content: {str(e)}")
+            logger.error(f"Failed to retrieve content: {str(e)}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to retrieve course content: {str(e)}"
+            )
     
     async def generate_quiz(
         self,
@@ -56,29 +95,92 @@ class QuizService:
     ) -> QuizResponse:
         """
         Generate quiz and save to database.
+        Supports both natural language and structured input.
         Returns quiz WITHOUT answers.
-        """
-        # 1. Retrieve relevant content from ChromaDB (all collections)
-        content = await self._retrieve_content(request.topic)
         
-        # 2. Generate quiz using AI
+        Raises:
+            HTTPException: For various error conditions (404, 400, 500)
+        """
+        # Determine mode and parse if needed
+        if request.quiz_description:
+            # Sanitize input to prevent prompt injection
+            sanitized_description = sanitize_quiz_description(request.quiz_description)
+            
+            if not sanitized_description or len(sanitized_description) < 10:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Quiz description is too short or contains only invalid characters. "
+                           "Please provide a meaningful description of the quiz you want."
+                )
+            
+            # Natural language mode - parse description
+            parsed = await self.ai.parse_quiz_description(
+                sanitized_description,
+                request.difficulty or "medium"
+            )
+            
+            # Check if AI detected out-of-scope topic
+            if "error" in parsed:
+                error_type = parsed.get("error")
+                message = parsed.get("message", "Invalid quiz request")
+                
+                if error_type == "out_of_scope":
+                    raise HTTPException(status_code=400, detail=message)
+                else:
+                    raise HTTPException(status_code=400, detail=message)
+            
+            # Use parsed values
+            topic = parsed["topic"]
+            total_questions = parsed["total_questions"]
+            num_mcq = parsed["num_mcq"]
+            num_blanks = parsed["num_blanks"]
+            num_descriptive = parsed["num_descriptive"]
+            difficulty = request.difficulty or "medium"
+            quiz_description = sanitized_description
+        else:
+            # Structured mode - use provided values
+            topic = request.topic
+            total_questions = request.total_questions
+            num_mcq = request.num_mcq
+            num_blanks = request.num_blanks
+            num_descriptive = request.num_descriptive
+            difficulty = request.difficulty or "medium"
+            quiz_description = None
+        
+        # 1. Retrieve relevant content from ChromaDB (with threshold filtering)
+        content = await self._retrieve_content(topic)
+        
+        # 2. Generate quiz using AI (with security boundaries)
         ai_response = await self.ai.generate_quiz(
-            topic=request.topic,
+            topic=topic,
             content=content,
-            num_mcq=request.num_mcq,
-            num_blanks=request.num_blanks,
-            num_descriptive=request.num_descriptive,
-            difficulty=request.difficulty
+            num_mcq=num_mcq,
+            num_blanks=num_blanks,
+            num_descriptive=num_descriptive,
+            difficulty=difficulty
         )
         
-        # 3. Create quiz in database
+        # 3. Check if AI returned an error
+        if isinstance(ai_response, dict) and "error" in ai_response:
+            error_type = ai_response.get("error")
+            message = ai_response.get("message", "Failed to generate quiz")
+            
+            if error_type == "insufficient_content":
+                raise HTTPException(status_code=404, detail=message)
+            elif error_type == "out_of_scope":
+                raise HTTPException(status_code=400, detail=message)
+            else:
+                raise HTTPException(status_code=500, detail=message)
+        
+        # 4. Create quiz in database
         quiz_db = Quiz(
-            topic=request.topic,
-            total_questions=request.total_questions,
-            num_mcq=request.num_mcq,
-            num_blanks=request.num_blanks,
-            num_descriptive=request.num_descriptive,
-            difficulty=request.difficulty
+            quiz_description=quiz_description,
+            topic=topic,
+            total_questions=total_questions,
+            num_mcq=num_mcq,
+            num_blanks=num_blanks,
+            num_descriptive=num_descriptive,
+            difficulty=difficulty
         )
         db.add(quiz_db)
         db.flush()  # Get quiz ID
@@ -109,7 +211,7 @@ class QuizService:
                 quiz_id=quiz_db.id,
                 question_type=QuestionType.BLANK,
                 question_text=blank['question'],
-                question_order=request.num_mcq + idx + 1,
+                question_order=num_mcq + idx + 1,
                 correct_answer=blank['answer'],
                 explanation=blank['explanation']
             )
@@ -121,7 +223,7 @@ class QuizService:
                 quiz_id=quiz_db.id,
                 question_type=QuestionType.DESCRIPTIVE,
                 question_text=desc['question'],
-                question_order=request.num_mcq + request.num_blanks + idx + 1,
+                question_order=num_mcq + num_blanks + idx + 1,
                 sample_answer=desc['sample_answer'],
                 key_points=json.dumps(desc['key_points']),
                 explanation=desc['explanation']
@@ -168,6 +270,7 @@ class QuizService:
         
         return QuizResponse(
             quiz_id=quiz_db.id,
+            quiz_description=quiz_db.quiz_description,
             topic=quiz_db.topic,
             total_questions=quiz_db.total_questions,
             num_mcq=quiz_db.num_mcq,
