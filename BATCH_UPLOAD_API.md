@@ -2,16 +2,16 @@
 
 **Base URL:** `http://localhost:8000`  
 **Version:** 2.0.0  
-**Last Updated:** November 9, 2025
+**Last Updated:** November 10, 2025
 
 ---
 
 ## 📋 Overview
 
-Upload multiple documents (up to 10 files) in a single request for batch processing. All files are processed asynchronously and stored in the same ChromaDB collection.
+Upload multiple documents (up to 30 files) in a single request for batch processing. All files are processed asynchronously and stored in the same ChromaDB collection.
 
 **Key Features:**
-- ✅ Upload 2-10 files simultaneously
+- ✅ Upload 2-30 files simultaneously
 - ✅ Single job ID for tracking
 - ✅ Unified progress tracking
 - ✅ Per-file status and error handling
@@ -47,20 +47,20 @@ curl -X POST "http://localhost:8000/api/start-embedding" \
 
 **Endpoint:** `POST /api/start-embedding-batch`
 
-**Description:** Upload multiple files (2-10) for batch processing into a single collection.
+**Description:** Upload multiple files (2-30) for batch processing into a single collection.
 
 **Request Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `files` | List[File] | ✅ Yes | 2-10 PDF or PPTX files |
+| `files` | List[File] | ✅ Yes | 2-30 PDF or PPTX files |
 | `collection_name` | string | ❌ No | Collection name for all files (defaults to timestamp) |
 
 **Validation Rules:**
 - Minimum files: 2
-- Maximum files: 10
+- Maximum files: 30
 - Per-file size limit: 50 MB
-- Total batch size limit: 200 MB
+- Total batch size limit: 1.5 GB (50MB × 30)
 - Allowed types: `.pdf`, `.pptx`
 
 **cURL Example:**
@@ -127,7 +127,7 @@ console.log(`Job ID: ${result.job_id}`);
 **400 Bad Request - Too Many Files:**
 ```json
 {
-  "detail": "Maximum 10 files allowed per batch"
+  "detail": "Maximum 30 files allowed per batch"
 }
 ```
 
@@ -438,7 +438,7 @@ export default function BatchDocumentUpload() {
     }
 
     if (files.length > 10) {
-      setError('Maximum 10 files allowed');
+      setError('Maximum 30 files allowed');
       return;
     }
 
@@ -530,7 +530,7 @@ export default function BatchDocumentUpload() {
         <div className="space-y-4">
           <div>
             <label className="block mb-2 font-semibold">
-              Select Files (2-10 files, PDF or PPTX)
+              Select Files (2-30 files, PDF or PPTX)
             </label>
             <input
               type="file"
@@ -718,12 +718,12 @@ export default function BatchDocumentUpload() {
 
 ## 🎯 Key Differences: Single vs Batch
 
-| Feature | Single File | Batch (2-10 Files) |
+| Feature | Single File | Batch (2-30 Files) |
 |---------|-------------|-------------------|
 | **Endpoint** | `/api/start-embedding` | `/api/start-embedding-batch` |
 | **Field Name** | `file` | `files` (multiple) |
 | **Min Files** | 1 | 2 |
-| **Max Files** | 1 | 10 |
+| **Max Files** | 1 | 30 |
 | **Response** | `job_id` | `job_id` + `total_files` |
 | **Progress** | Single file progress | Per-file + overall progress |
 | **Status Check** | Standard job object | Job object with `is_batch: true` |
@@ -772,7 +772,7 @@ try {
 | Validation | Limit | Error Message |
 |------------|-------|---------------|
 | Min files | 2 | "Minimum 2 files required for batch upload" |
-| Max files | 10 | "Maximum 10 files allowed per batch" |
+| Max files | 30 | "Maximum 30 files allowed per batch" |
 | File type | PDF, PPTX | "File 'X' has invalid type. Allowed types: PDF, PPTX" |
 | Per-file size | 50 MB | "File 'X' exceeds 50MB limit" |
 | Total batch size | 200 MB | "Total batch size (X MB) exceeds 200MB limit" |

@@ -278,3 +278,41 @@ GENERATE THE QUIZ NOW:"""
             raise ValueError(f"Failed to parse AI response as JSON: {str(e)}")
         except Exception as e:
             raise Exception(f"AI generation failed: {str(e)}")
+    
+    async def stream_chat_response(
+        self,
+        messages: list[Dict[str, str]],
+        system_prompt: str
+    ):
+        """
+        Stream chat response from Groq API token by token.
+        
+        Args:
+            messages: List of chat messages [{"role": "user", "content": "..."}]
+            system_prompt: System instructions for the AI
+        
+        Yields:
+            str: Individual tokens from the response
+        """
+        try:
+            # Build messages with system prompt
+            full_messages = [
+                {"role": "system", "content": system_prompt}
+            ] + messages
+            
+            # Call Groq API with streaming enabled
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=full_messages,
+                temperature=0.7,
+                max_tokens=1000,
+                stream=True  # Enable streaming
+            )
+            
+            # Stream tokens as they arrive
+            for chunk in response:
+                if chunk.choices[0].delta.content:
+                    yield chunk.choices[0].delta.content
+                    
+        except Exception as e:
+            raise Exception(f"Streaming chat failed: {str(e)}")

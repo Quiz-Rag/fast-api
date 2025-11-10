@@ -115,14 +115,14 @@ async def start_embedding(
 
 @router.post("/start-embedding-batch", response_model=JobResponse, status_code=status.HTTP_202_ACCEPTED)
 async def start_embedding_batch(
-    files: List[UploadFile] = File(..., description="Multiple PDF or PPTX files to process (2-10 files)")
+    files: List[UploadFile] = File(..., description="Multiple PDF or PPTX files to process (2-30 files)")
 ):
     """
     Upload multiple documents and start batch embedding process asynchronously.
 
     Returns immediately with a job_id. Use the job-status endpoint to check progress.
 
-    - **files**: 2-10 document files to process (PDF or PPTX)
+    - **files**: 2-30 document files to process (PDF or PPTX)
 
     Returns:
         Job ID and status for tracking the batch processing
@@ -136,10 +136,10 @@ async def start_embedding_batch(
             detail="Minimum 2 files required for batch upload"
         )
     
-    if len(files) > 10:
+    if len(files) > 30:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Maximum 10 files allowed per batch"
+            detail="Maximum 30 files allowed per batch"
         )
     
     # Validate each file and calculate total size

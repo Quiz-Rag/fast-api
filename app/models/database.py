@@ -159,3 +159,42 @@ class DescriptiveGrading(Base):
     
     # Relationships
     user_answer = relationship("UserAnswer", back_populates="ai_grading")
+
+
+class ChatRole(enum.Enum):
+    """Chat message role enumeration."""
+    USER = "user"
+    ASSISTANT = "assistant"
+    SYSTEM = "system"
+
+
+class ChatSession(Base):
+    """Chat session table - stores conversation sessions."""
+    __tablename__ = "chat_sessions"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    session_id = Column(String(36), unique=True, nullable=False, index=True)  # UUID
+    user_id = Column(String(100), nullable=True)
+    user_name = Column(String(200), nullable=True)
+    started_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    last_message_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    message_count = Column(Integer, default=0, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    
+    # Relationships
+    messages = relationship("ChatMessage", back_populates="session", cascade="all, delete-orphan")
+
+
+class ChatMessage(Base):
+    """Chat message table - stores individual messages in conversations."""
+    __tablename__ = "chat_messages"
+    
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    session_id = Column(String(36), ForeignKey("chat_sessions.session_id", ondelete="CASCADE"), nullable=False, index=True)
+    role = Column(SQLEnum(ChatRole), nullable=False)
+    content = Column(Text, nullable=False)
+    tokens_used = Column(Integer, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
+    
+    # Relationships
+    session = relationship("ChatSession", back_populates="messages")

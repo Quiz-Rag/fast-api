@@ -1,12 +1,27 @@
-# Quiz Generation & Document Processing API
+# 🎓 AI-Powered Network Security Learning Platform
 
-A comprehensive FastAPI-based system for document processing, AI-powered quiz generation, and automated grading with batch upload support.
+A comprehensive FastAPI-based system for document processing, AI-powered quiz generation, and an interactive tutor chatbot to help students master Network Security concepts. Upload course materials (PDFs, PPTs) and get instant quizzes and conversational learning support!
+
+[![Demo Video](https://img.shields.io/badge/Demo-Watch%20Video-red?style=for-the-badge&logo=youtube)](https://drive.google.com/file/d/1oJInVJYRmZST9lXC0clNR8nic8Vjw3nO/view?usp=sharing)
+
+## 🎥 Video Demo
+
+**📺 [Click here to watch the full platform demo](https://drive.google.com/file/d/1oJInVJYRmZST9lXC0clNR8nic8Vjw3nO/view?usp=sharing)**
+
+The demo video showcases:
+- ✅ Uploading course materials (PDFs and PowerPoints)
+- ✅ Generating AI-powered quizzes from your content
+- ✅ Taking quizzes and getting instant feedback
+- ✅ Using the interactive tutor chatbot
+- ✅ Real-world examples and usage tips
+
+---
 
 ## 🎯 Features
 
 ### Document Processing
 - ✅ **Single File Upload** - Upload PDF/PPTX documents for text extraction and embedding
-- 🆕 **Batch Upload** - Upload 2-10 files simultaneously for efficient processing
+- 🆕 **Batch Upload** - Upload 2-30 files simultaneously for efficient processing
 - ✅ **Async Processing** - Non-blocking uploads with background workers (Celery)
 - ✅ **Progress Tracking** - Real-time progress updates for document processing
 - ✅ **Vector Storage** - ChromaDB for semantic search capabilities
@@ -118,7 +133,7 @@ celery -A app.workers.celery_app flower
 
 ### Document Processing
 - `POST /api/start-embedding` - Upload single document (PDF/PPTX)
-- 🆕 `POST /api/start-embedding-batch` - **Upload multiple documents (2-10 files)**
+- 🆕 `POST /api/start-embedding-batch` - **Upload multiple documents (2-30 files)**
 - `GET /api/job-status/{job_id}` - Check processing status
 - `GET /api/search` - Search documents in ChromaDB
 - `GET /api/collections` - List all collections

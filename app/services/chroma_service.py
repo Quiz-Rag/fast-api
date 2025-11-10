@@ -38,37 +38,86 @@ class ChromaService:
         
         Args:
             query: Search query text
-            collection_name: Specific collection to search (if None, searches first available)
+            collection_name: Specific collection to search (if None, searches ALL collections)
             n_results: Number of results to return
             
         Returns:
             Dictionary with documents, metadatas, distances
         """
         try:
-            # Get collection
+            # Get collections to search
             if collection_name:
+                # Search specific collection
                 collection = self.client.get_collection(
                     name=collection_name,
                     embedding_function=self.embedding_function
                 )
+                results = collection.query(
+                    query_texts=[query],
+                    n_results=n_results,
+                    include=["documents", "metadatas", "distances"]
+                )
+                return results
             else:
-                # Get first available collection
+                # Search ALL collections and combine results
                 collections = self.client.list_collections()
                 if not collections:
                     raise ValueError("No collections found in ChromaDB")
-                collection = self.client.get_collection(
-                    name=collections[0].name,
-                    embedding_function=self.embedding_function
-                )
-            
-            # Perform search
-            results = collection.query(
-                query_texts=[query],
-                n_results=n_results,
-                include=["documents", "metadatas", "distances"]
-            )
-            
-            return results
+                
+                all_documents = []
+                all_metadatas = []
+                all_distances = []
+                
+                # Search each collection
+                for coll in collections:
+                    try:
+                        collection = self.client.get_collection(
+                            name=coll.name,
+                            embedding_function=self.embedding_function
+                        )
+                        
+                        # Get results from this collection
+                        coll_results = collection.query(
+                            query_texts=[query],
+                    n_results=n_results,
+                            include=["documents", "metadatas", "distances"]
+                        )
+                        
+                        # Combine results
+                        if coll_results and coll_results.get('documents'):
+                            all_documents.extend(coll_results['documents'][0])
+                            all_metadatas.extend(coll_results.get('metadatas', [[]])[0])
+                            all_distances.extend(coll_results.get('distances', [[]])[0])
+                            
+                    except Exception as e:
+                        # Skip collections that cause errors
+                        continue
+                
+                # Sort by distance (ascending - lower is better)
+                if all_distances:
+                    sorted_indices = sorted(range(len(all_distances)), key=lambda i: all_distances[i])
+                    
+                    # Take top n_results
+                    sorted_indices = sorted_indices[:n_results]
+                    
+                    # Reorder results
+                    sorted_documents = [all_documents[i] for i in sorted_indices]
+                    sorted_metadatas = [all_metadatas[i] for i in sorted_indices]
+                    sorted_distances = [all_distances[i] for i in sorted_indices]
+                    
+                    results = {
+                        'documents': [sorted_documents],
+                        'metadatas': [sorted_metadatas],
+                        'distances': [sorted_distances]
+                    }
+                else:
+                    results = {
+                        'documents': [[]],
+                        'metadatas': [[]],
+                        'distances': [[]]
+                    }
+                
+                return results
             
         except ValueError as e:
             raise ValueError(f"Collection error: {str(e)}")

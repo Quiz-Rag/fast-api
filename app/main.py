@@ -8,6 +8,7 @@ import os
 
 from app.api.routes import router
 from app.api.quiz_routes import router as quiz_router
+from app.api.chat_routes import router as chat_router
 from app.db.database import init_db
 from app.config import settings
 
@@ -32,6 +33,7 @@ app.add_middleware(
 # Include API routes
 app.include_router(router, prefix="/api", tags=["documents"])
 app.include_router(quiz_router, prefix="/api", tags=["quiz"])
+app.include_router(chat_router, prefix="/api", tags=["chat"])
 
 
 @app.on_event("startup")
@@ -83,6 +85,8 @@ async def root():
             "collections": "/api/collections",
             "quiz_generation": "/api/quiz/generate",
             "quiz_submission": "/api/quiz/submit",
-            "quiz_list": "/api/quiz/list/all"
+            "quiz_list": "/api/quiz/list/all",
+            "chat_tutor": "/api/chat/start",
+            "chat_message": "/api/chat/message"
         }
     }
