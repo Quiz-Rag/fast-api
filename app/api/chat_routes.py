@@ -114,10 +114,12 @@ async def send_message(
         )
         
         # Retrieve relevant course content
-        context = await tutor_service.retrieve_context(
-            question=sanitized_message,
-            chat_history=chat_history
+        context, cites = tutor_service.chroma.retrieve_with_citations(
+            query=sanitized_message,
+            collection_name=None,
+            n_results=4
         )
+
         
         # Calculate debug information
         context_length = len(context)
@@ -172,14 +174,20 @@ async def send_message(
                         if data.get("type") == "token":
                             full_response += data.get("content", "")
                         elif data.get("type") == "done":
-                            # Save assistant's response to database
+                            # Build citation suffix
+                            citation_suffix = tutor_service.build_citation_suffix(cites)
+
+                            final_answer = full_response.strip() + citation_suffix
+
+                            # Save assistant's response with citation included
                             chat_service.add_message(
                                 db=db,
                                 session_id=request.session_id,
                                 role=ChatRole.ASSISTANT,
-                                content=full_response.strip(),
+                                content=final_answer,
                                 tokens_used=data.get("tokens_used")
-                            )
+    )
+
                     except:
                         pass
                         

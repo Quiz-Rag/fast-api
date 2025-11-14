@@ -53,8 +53,26 @@ Ask me anything about:
 • Authentication & Authorization 🔑
 • Secure Coding & Best Practices ✨
 
-I'll give you clear, concise answers based on your course materials. Let's learn together! What's on your mind? 😊"""
-    
+I'll give you clear, concise answers based on your course materials. Let's learn together! What's on your mind? """
+    def build_citation_suffix(self, citations):
+        """
+        Creates a clean one-line citation tag.
+        Examples:
+        - Source: [Slide 12]
+        - Source: [Page 5]
+        - Source: [No matching slide found]
+        """
+        if not citations or len(citations) == 0:
+            return "\n\nSource: [No matching slide found]"
+
+        c = citations[0]  # take top result
+        loc = c.get("location")
+
+        if loc:
+            return f"\n\nSource: [{loc}]"
+        else:
+            return "\n\nSource: [No matching slide found]"
+        
     def build_system_prompt(self) -> str:
         """
         Build hardened system prompt with tutor personality and security boundaries.
@@ -240,3 +258,4 @@ IMPORTANT: No course materials were found for this question.
 You MUST respond with: "I don't have that information in your course materials. Please check with your instructor or upload relevant documents about this topic."
 
 DO NOT provide general knowledge answers. ONLY use course materials."""
+        

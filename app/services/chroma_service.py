@@ -12,12 +12,12 @@ from typing import Dict, Any, Optional
 
 class ChromaService:
     """Service for interacting with ChromaDB."""
-    
+
     def __init__(self):
         """Initialize ChromaDB client."""
         if not os.path.exists(settings.chroma_db_path):
             raise ValueError(f"ChromaDB path not found: {settings.chroma_db_path}")
-        
+
         self.client = chromadb.PersistentClient(
             path=settings.chroma_db_path,
             settings=ChromaSettings(
@@ -25,8 +25,41 @@ class ChromaService:
                 allow_reset=True
             )
         )
+
         self.embedding_function = DefaultEmbeddingFunction()
-    
+
+    # --------------------------------------------
+    #  THIS METHOD MUST BE OUTSIDE __init__
+    # --------------------------------------------
+    def retrieve_with_citations(self, query: str, collection_name: Optional[str] = None, n_results: int = 4):
+        """
+        Returns both:
+        - combined context text
+        - citation metadata list
+        """
+        results = self.search_documents(
+            query=query,
+            collection_name=collection_name,
+            n_results=n_results
+        )
+
+        docs = results.get("documents", [[]])[0]
+        metas = results.get("metadatas", [[]])[0]
+
+        # Build combined context
+        context = "\n\n".join(docs) if docs else ""
+
+        # Build citation objects
+        citations = []
+        for m in metas:
+            if isinstance(m, dict):
+                loc = m.get("location")
+            else:
+                loc = None
+            citations.append({"location": loc})
+
+        return context, citations
+
     def search_documents(
         self,
         query: str,
