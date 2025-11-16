@@ -104,3 +104,20 @@ class ContextEvaluationOutput(BaseModel):
     code: int = Field(description="Evaluation code: 0 = not NS related, 1 = NS related but context insufficient, 2 = NS related and context sufficient")
     reason: str = Field(description="Brief explanation for the evaluation code")
 
+
+class ChatResponseOutput(BaseModel):
+    """Structure for chat response with reference text."""
+    answer: str = Field(description="The complete answer text")
+    ref_text: str = Field(description="The exact text from the provided context that was used to generate this answer")
+    citations: Optional[List[str]] = Field(default=None, description="List of citation strings (optional)")
+
+
+class PageNumberOutput(BaseModel):
+    """Structure for page number identification output."""
+    page_number: int = Field(description="The page number where the reference text appears (first occurrence)")
+
+
+class RefTextOutput(BaseModel):
+    """Structure for reference text extraction output."""
+    ref_text: str = Field(description="The exact text from the provided context that was used to generate the answer")
+

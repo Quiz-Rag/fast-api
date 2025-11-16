@@ -43,7 +43,7 @@ async def generate_quiz(
     - Natural language quiz descriptions or structured parameters
     - Random quiz generation with auto-selected topics and question types
     - Retrieves relevant content from ChromaDB based on topic
-    - Uses Groq AI to generate questions
+    - Uses OpenAI GPT-4 to generate questions
     - Saves quiz to database with answers
     - Returns questions WITHOUT answers to frontend
     

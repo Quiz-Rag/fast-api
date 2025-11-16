@@ -1,16 +1,16 @@
 """
-AI service for quiz generation using LangChain ChatGroq.
+AI service for quiz generation using LangChain ChatOpenAI.
 """
 
 from app.config import settings
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import logging
 
-from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from app.models.langchain_schemas import (
-    QuizGenerationOutput, QuizErrorOutput, QuizDescriptionOutput
+    QuizGenerationOutput, QuizErrorOutput, QuizDescriptionOutput, ChatResponseOutput, RefTextOutput
 )
 from app.services.prompts import PromptTemplates
 
@@ -18,25 +18,27 @@ logger = logging.getLogger(__name__)
 
 
 class AIService:
-    """Service for interacting with Groq AI via LangChain."""
+    """Service for interacting with OpenAI GPT-4 via LangChain."""
     
     def __init__(self):
-        """Initialize LangChain ChatGroq."""
-        if not settings.groq_api_key:
-            raise ValueError("GROQ_API_KEY not set in environment variables")
+        """Initialize LangChain ChatOpenAI."""
+        if not settings.openai_api_key:
+            raise ValueError("OPENAI_API_KEY not set in environment variables")
         
-        # Initialize LangChain ChatGroq
-        self.llm = ChatGroq(
-            model=settings.groq_model,
+        # Initialize LangChain ChatOpenAI
+        self.llm = ChatOpenAI(
+            model=settings.openai_llm_model,
             temperature=0.7,
-            groq_api_key=settings.groq_api_key
+            openai_api_key=settings.openai_api_key
         )
         
         # Initialize output parsers
         self.quiz_parser = PydanticOutputParser(pydantic_object=QuizGenerationOutput)
         self.quiz_description_parser = PydanticOutputParser(pydantic_object=QuizDescriptionOutput)
+        self.chat_response_parser = PydanticOutputParser(pydantic_object=ChatResponseOutput)
+        self.ref_text_parser = PydanticOutputParser(pydantic_object=RefTextOutput)
         
-        self.model = settings.groq_model
+        self.model = settings.openai_llm_model
     
     async def parse_quiz_description(self, description: str, difficulty: str) -> Dict[str, Any]:
         """
@@ -218,7 +220,7 @@ GENERATE THE QUIZ NOW:"""
         difficulty: str = "medium"
     ) -> Dict[str, Any]:
         """
-        Generate quiz using Groq API (direct or via LangChain).
+        Generate quiz using OpenAI GPT-4 API via LangChain.
         
         Returns:
             Dictionary with mcq, blanks, and descriptive questions
@@ -268,7 +270,7 @@ GENERATE THE QUIZ NOW:"""
         system_prompt: str
     ):
         """
-        Stream chat response from Groq API token by token (direct or via LangChain).
+        Stream chat response from OpenAI GPT-4 API token by token via LangChain.
         
         Args:
             messages: List of chat messages [{"role": "user", "content": "..."}]
@@ -307,3 +309,60 @@ GENERATE THE QUIZ NOW:"""
         except Exception as e:
             logger.error(f"Streaming chat failed: {str(e)}")
             raise Exception(f"Streaming chat failed: {str(e)}")
+    
+    async def extract_ref_text(self, full_response: str, context: str) -> Optional[str]:
+        """
+        Extract reference text from LLM response using structured output.
+        
+        Args:
+            full_response: The complete LLM response text
+            context: The context that was provided to the LLM
+        
+        Returns:
+            Reference text string or None if extraction fails
+        """
+        try:
+            # Limit context to avoid token limits
+            limited_context = context[:3000] if len(context) > 3000 else context
+            
+            # Use ChatPromptTemplate with variables (not f-string)
+            chat_prompt = ChatPromptTemplate.from_messages([
+                ("system", "You are a text analyzer. Extract reference text accurately. Always respond with valid JSON only."),
+                ("human", """Given the following LLM response and the context that was provided, extract the exact text from the context that was used to generate this answer.
+
+CONTEXT PROVIDED:
+{limited_context}
+
+LLM RESPONSE:
+{full_response}
+
+INSTRUCTIONS:
+- Identify the exact text from the context that was used to answer the question
+- Quote it directly from the context
+- If multiple parts were used, quote the most relevant one (50-200 characters)
+- Return only the quoted text, nothing else
+
+Respond with valid JSON only:
+{{
+    "ref_text": "<exact text from context>"
+}}""")
+            ])
+            
+            chain = chat_prompt | self.llm.with_config({"temperature": 0.3}) | self.ref_text_parser
+            result = await chain.ainvoke({
+                "limited_context": limited_context,
+                "full_response": full_response
+            })
+            
+            ref_text = result.ref_text.strip()
+            
+            if ref_text and len(ref_text) >= 20:
+                logger.info(f"Extracted ref_text (length: {len(ref_text)}): {ref_text[:100]}...")
+                return ref_text
+            else:
+                logger.warning(f"Ref text too short or empty: {ref_text}")
+                return None
+                
+        except Exception as e:
+            logger.error(f"Error extracting ref_text: {str(e)}")
+            return None

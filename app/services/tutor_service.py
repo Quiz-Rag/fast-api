@@ -55,16 +55,58 @@ class TutorService:
         
         return normalized if normalized else "Unknown"
     
+    def _find_file_path(self, source_file: str) -> Optional[str]:
+        """
+        Find the file path for a given source file name.
+        Searches in uploads directory for files matching pattern *_{source_file}.
+        
+        Args:
+            source_file: Original filename (e.g., "Lecture 1_slides.pdf")
+        
+        Returns:
+            Full file path if found, None otherwise
+        """
+        import glob
+        from app.config import settings
+        
+        if not source_file:
+            return None
+        
+        # Search in uploads directory
+        upload_dir = settings.upload_dir
+        if not os.path.exists(upload_dir):
+            logger.warning(f"Upload directory not found: {upload_dir}")
+            return None
+        
+        # Try to find file with pattern *_{source_file}
+        # Handle both with and without timestamp prefix
+        patterns = [
+            os.path.join(upload_dir, f"*_{source_file}"),
+            os.path.join(upload_dir, source_file)  # Direct match
+        ]
+        
+        for pattern in patterns:
+            matches = glob.glob(pattern)
+            if matches:
+                # Return first match
+                file_path = matches[0]
+                if os.path.exists(file_path):
+                    logger.debug(f"Found file: {file_path} for source_file: {source_file}")
+                    return file_path
+        
+        logger.warning(f"File not found for source_file: {source_file}")
+        return None
+    
     def _format_human_readable_chunk_label(self, citation: Dict) -> str:
         """
         Format citation as human-readable chunk label.
-        Returns simple "Slide X" format where X is the lecture number.
+        Returns "Slide X" or "Slide X, Page Y" format.
         
         Args:
-            citation: Citation dict with source_file, slide_number
+            citation: Citation dict with source_file, slide_number, page_number
             
         Returns:
-            Formatted string like "Slide 1" or "Slide 19"
+            Formatted string like "Slide 1" or "Slide 1, Page 5"
         """
         slide_num = citation.get('slide_number')
         
@@ -80,8 +122,14 @@ class TutorService:
             if lecture_match:
                 slide_num = int(lecture_match.group(1))
         
+        # Check for page number
+        page_num = citation.get('page_number')
+        
         if slide_num is not None:
-            return f"Slide {slide_num}"
+            if page_num is not None:
+                return f"Slide {slide_num}, Page {page_num}"
+            else:
+                return f"Slide {slide_num}"
         else:
             return "Slide Unknown"
     
@@ -153,7 +201,7 @@ I'll give you clear, concise answers based on your course materials. Let's learn
                 citation["formatted"] = formatted_str
                 formatted.append(citation)
             else:
-                # ChromaDB citation format: Slide X
+                # ChromaDB citation format: Slide X or Slide X, Page Y
                 slide_num = citation.get("slide_number")
                 
                 # Fallback: try page_number for backward compatibility
@@ -168,8 +216,15 @@ I'll give you clear, concise answers based on your course materials. Let's learn
                     if lecture_match:
                         slide_num = int(lecture_match.group(1))
                 
+                # Check for page number
+                page_num = citation.get("page_number")
+                
+                # Format citation with page number if available
                 if slide_num is not None:
-                    formatted_str = f"Slide {slide_num}"
+                    if page_num is not None:
+                        formatted_str = f"Slide {slide_num}, Page {page_num}"
+                    else:
+                        formatted_str = f"Slide {slide_num}"
                 else:
                     formatted_str = "Slide Unknown"
                 
@@ -458,11 +513,11 @@ I'll give you clear, concise answers based on your course materials. Let's learn
             Evaluation code: 0 (not NS related), 1 (NS related but context insufficient), 2 (NS related and context sufficient)
         """
         try:
-            from langchain_groq import ChatGroq
+            from langchain_openai import ChatOpenAI
             from langchain_core.output_parsers import PydanticOutputParser
             
-            if not settings.groq_api_key:
-                logger.warning("Groq API key not configured, skipping context evaluation")
+            if not settings.openai_api_key:
+                logger.warning("OpenAI API key not configured, skipping context evaluation")
                 return 2  # Default to sufficient if can't evaluate
             
             # Create parser for structured output
@@ -472,9 +527,9 @@ I'll give you clear, concise answers based on your course materials. Let's learn
             prompt_template = PromptTemplates.get_context_evaluation_prompt()
             
             # Create LLM
-            llm = ChatGroq(
-                model_name=settings.groq_model,
-                groq_api_key=settings.groq_api_key,
+            llm = ChatOpenAI(
+                model=settings.openai_llm_model,
+                openai_api_key=settings.openai_api_key,
                 temperature=0.1
             )
             

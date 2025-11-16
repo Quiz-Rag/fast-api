@@ -698,7 +698,7 @@ class QuizService:
                             extra_content=json.dumps(result.extra_content),
                             feedback=result.feedback,
                             suggestions=json.dumps(result.suggestions),
-                            model_used=settings.groq_model,
+                            model_used=settings.openai_llm_model,
                             is_ai_graded=True,
                             graded_at=datetime.utcnow()
                         )

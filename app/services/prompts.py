@@ -381,4 +381,32 @@ Respond ONLY with valid JSON (no markdown, no code blocks):
     "feedback": "<2-3 sentences explaining the score>",
     "suggestions": [<specific improvements needed>]
 }}"""
+    
+    @staticmethod
+    def get_page_identification_prompt() -> ChatPromptTemplate:
+        """Get prompt template for page number identification."""
+        template = ChatPromptTemplate.from_messages([
+            ("system", "You are a precise document analyzer. Your task is to identify which page number contains a specific reference text."),
+            ("human", """Given the following pages from a document and a reference text, identify which page number (first occurrence) contains this text.
+
+PAGES:
+{pages_text}
+
+REFERENCE TEXT TO FIND:
+{ref_text}
+
+INSTRUCTIONS:
+- Search through each page to find where the reference text appears
+- Return the page number where the text first appears
+- If the text appears on multiple pages, return the first page number
+- If the text is not found exactly, find the page with the most similar content
+- Return ONLY the page number as an integer
+
+Respond with valid JSON only:
+{{
+    "page_number": <integer>
+}}""")
+        ])
+        
+        return template
 

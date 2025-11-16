@@ -288,11 +288,48 @@ async def send_message(
                                     # Final fallback: use top 1-2 citations
                                     current_citations = all_citations[:2] if len(all_citations) > 2 else all_citations
                                     logger.warning(f"⚠️ No citations found, using top {len(current_citations)} citations as fallback")
+                                
+                                # Extract ref_text and identify page numbers for ChromaDB citations
+                                if current_citations and not is_web_search:
+                                    try:
+                                        # Extract ref_text from full response
+                                        from app.services.page_identifier_service import PageIdentifierService
+                                        page_identifier = PageIdentifierService()
+                                        
+                                        ref_text = await tutor_service.ai.extract_ref_text(full_response, context)
+                                        
+                                        if ref_text:
+                                            logger.info(f"Extracted ref_text for page identification: {ref_text[:100]}...")
+                                            
+                                            # Identify page numbers for each citation
+                                            for cit in current_citations:
+                                                if not cit.get("url"):  # Only for ChromaDB citations
+                                                    source_file = cit.get("source_file")
+                                                    if source_file:
+                                                        file_path = tutor_service._find_file_path(source_file)
+                                                        if file_path:
+                                                            file_type = cit.get("document_type", "pdf")
+                                                            page_num = await page_identifier.identify_page_number(
+                                                                file_path, ref_text, file_type
+                                                            )
+                                                            if page_num:
+                                                                cit["page_number"] = page_num
+                                                                logger.info(f"Identified page {page_num} for {source_file}")
+                                                            else:
+                                                                logger.debug(f"Could not identify page number for {source_file}")
+                                                        else:
+                                                            logger.debug(f"File not found for {source_file}, skipping page identification")
+                                    except Exception as e:
+                                        logger.error(f"Error identifying page numbers: {str(e)}")
+                                        # Continue without page numbers - graceful degradation
                             
-                            # Format citations for frontend
+                            # Format citations for frontend (with page numbers if available)
                             if current_citations:
+                                # Re-format citations to include page numbers
+                                formatted_citations = tutor_service.format_citations(current_citations)
+                                
                                 citation_list = []
-                                for cit in current_citations:
+                                for cit in formatted_citations:
                                     # Handle web citations (have URL)
                                     if cit.get("url"):
                                         citation_list.append({
@@ -301,7 +338,7 @@ async def send_message(
                                             "formatted": cit.get("formatted", f"[{cit.get('source', 'Unknown')}]({cit.get('url', '')})")
                                         })
                                     else:
-                                        # Handle ChromaDB citations
+                                        # Handle ChromaDB citations (with page numbers if available)
                                         citation_list.append({
                                             "source_file": cit.get("source_file", "Unknown"),
                                             "document_type": cit.get("document_type", "unknown"),
@@ -310,7 +347,7 @@ async def send_message(
                                             "formatted": cit.get("formatted", cit.get("source_file", "Unknown"))
                                         })
                                 yield create_citation_sse(request.session_id, citation_list)
-                                logger.info(f"Sent {len(citation_list)} filtered citations to frontend")
+                                logger.info(f"Sent {len(citation_list)} filtered citations to frontend (with page numbers if available)")
                             
                             # Save assistant's response to database
                             chat_service.add_message(

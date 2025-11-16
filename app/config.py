@@ -31,9 +31,9 @@ class Settings(BaseSettings):
     # Database Configuration
     db_path: str = "./app/data/quizzes.db"
     
-    # Groq AI Configuration
-    groq_api_key: Optional[str] = None
-    groq_model: str = "llama-3.3-70b-versatile"
+    # OpenAI LLM Configuration (for chat, quiz generation, grading)
+    # Note: openai_api_key is also used for embeddings (text-embedding-3-small)
+    openai_llm_model: str = "gpt-4o"  # GPT-4 Omni model
     
     # Tavily Web Search Configuration
     tavily_api_key: Optional[str] = None

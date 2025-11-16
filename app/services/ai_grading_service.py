@@ -1,13 +1,13 @@
 """
 AI-powered grading service for descriptive quiz answers.
-Uses LangChain ChatGroq to compare user answers with expected answers.
+Uses LangChain ChatOpenAI to compare user answers with expected answers.
 """
 
 from typing import List, Dict, Optional
 from app.config import settings
 import logging
 
-from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from app.models.langchain_schemas import GradingOutput
@@ -20,17 +20,20 @@ class AIGradingService:
     """Service for AI-powered descriptive answer grading."""
     
     def __init__(self):
-        """Initialize LangChain ChatGroq."""
-        # Initialize LangChain ChatGroq
-        self.llm = ChatGroq(
-            model=settings.groq_model,
+        """Initialize LangChain ChatOpenAI."""
+        if not settings.openai_api_key:
+            raise ValueError("OPENAI_API_KEY not set in environment variables")
+        
+        # Initialize LangChain ChatOpenAI
+        self.llm = ChatOpenAI(
+            model=settings.openai_llm_model,
             temperature=0.2,
-            groq_api_key=settings.groq_api_key
+            openai_api_key=settings.openai_api_key
         )
         # Initialize output parser
         self.grading_parser = PydanticOutputParser(pydantic_object=GradingOutput)
         
-        self.model = settings.groq_model
+        self.model = settings.openai_llm_model
     
     async def grade_descriptive_answer(
         self,
@@ -40,7 +43,7 @@ class AIGradingService:
         key_points: Optional[List[str]] = None
     ) -> Dict:
         """
-        Grade a descriptive answer using Groq LLM.
+        Grade a descriptive answer using OpenAI GPT-4 LLM.
         
         Args:
             question: The question text
