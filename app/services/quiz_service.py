@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.models.database import Quiz, Question, QuestionType, QuizAttempt, UserAnswer, DescriptiveGrading
 from app.models.quiz_schemas import *
 from app.services.chroma_service import ChromaService
+from app.services.rag_service import RAGService
 from app.services.ai_service import AIService
 from app.services.ai_grading_service import ai_grading_service
 from app.security.input_sanitizer import sanitize_quiz_description
@@ -13,7 +14,8 @@ from app.config import settings
 from fastapi import HTTPException
 import json
 import asyncio
-from typing import List
+import random
+from typing import List, Tuple
 from datetime import datetime
 import logging
 
@@ -23,18 +25,128 @@ logger = logging.getLogger(__name__)
 class QuizService:
     """Service for quiz generation and grading."""
     
+    # Predefined list of available topics (95 topics)
+    AVAILABLE_TOPICS = [
+        "Basic Concepts of Network Security",
+        "Security Requirements",
+        "Security Architecture",
+        "Security Attacks",
+        "Active Attacks",
+        "Passive Attacks",
+        "Human Factors in Security and Design",
+        "Model of Network Security",
+        "Symmetric Encryption Principles",
+        "Symmetric Encryption Attacks",
+        "Cryptanalysis",
+        "Encryption Schemes",
+        "Types of Encryption",
+        "DES (Data Encryption Standard)",
+        "Triple DES (3DES)",
+        "AES (Advanced Encryption Standard)",
+        "Encryption Criteria and Evaluation",
+        "Stream Cipher",
+        "Block Cipher",
+        "Random Numbers",
+        "Properties of Random Numbers",
+        "Entropy",
+        "True Random Number Generator",
+        "Pseudorandom Number Generator",
+        "Random Number Generation Algorithms",
+        "Random Number Security",
+        "RSA Encryption",
+        # Public-Key Cryptography topics
+        "Public-Key Cryptography",
+        "Conventional Cryptography and Pros & Cons",
+        "Public-Key Cryptography - Encryption and Definition",
+        "Encryption Steps",
+        "Public-Key Cryptography - Signature",
+        "Public-Key Application",
+        "TLS 1.2 – Use Public Key for Session Key Exchange",
+        "Security of Public Key Schemes",
+        "RSA Public-key Encryption",
+        "RSA Key Setup",
+        "RSA Key Generation",
+        "RSA Example & RSA Use",
+        "Correctness of RSA",
+        "Attack Approaches",
+        "RSA Decryption With Message Blinding",
+        "A Simple Attack on Textbook RSA",
+        "Homomorphic Encryption",
+        "Application of Homomorphic Encryption",
+        # Message Authentication topics
+        "Message Authentication",
+        "Message Encryption",
+        "Reasons to Avoid Encryption Authentication",
+        "Hash Function",
+        "One Use Case - Using Hash Function",
+        "Requirements for Secure Hash Functions",
+        "Hash Function: Collision Resistance",
+        "Hash Function: Examples",
+        "Length Extension Attacks",
+        "Merkle-Damgard Scheme",
+        "Do Hashes Provide Integrity?",
+        "Man-in-the-Middle Attack",
+        "Message Authentication Code",
+        "MACs: Usage & Definition",
+        "Randomized MAC (Non-Deterministic)",
+        "Existentially Unforgeable",
+        "Example: HMAC",
+        "HMAC(K, M)",
+        "HMAC Procedure",
+        "HMAC Properties",
+        "Do MACs Provide Integrity?",
+        # Authenticated Encryption topics
+        "Authenticated Encryption Definition",
+        "Authenticated Encryption: Scratchpad",
+        "MAC-then-Encrypt or Encrypt-then-MAC?",
+        "TLS 1.0 \"Lucky 13\" Attack",
+        "Authenticated Encryption: Summary",
+        # Digital Signature topics
+        "Digital Signature",
+        "Digital Signatures: Definition",
+        "RSA Signature",
+        "RSA Probabilistic Digital Signature Scheme (RSA-PSS)",
+        "RSA Signatures: Correctness",
+        "RSA Digital Signature: Security",
+        "Hybrid Encryption",
+        # Authentication topics
+        "Remote User Authentication Principles",
+        "Means of User Authentication",
+        "News about Bitcoins",
+        "Ways to Achieve Symmetric Key Distribution",
+        "Many-to-Many Authentication",
+        # Kerberos topics
+        "Kerberos: Threats",
+        "Kerberos: Requirements",
+        "A Simple Authentication Dialogue",
+        "A More Secure Authentication Dialogue",
+        "Ticket Hijacking",
+        "No Server Authentication",
+        "Kerberos v4 - Once Per User Logon Session",
+        "Kerberos v4 - Once Per Service Session",
+        "Overview of Kerberos",
+        "Important Ideas in Kerberos",
+        "Kerberos in Large Networks",
+        "Practical Uses of Kerberos"
+    ]
+    
+    # Available difficulty levels
+    AVAILABLE_DIFFICULTIES = ["easy", "medium", "hard"]
+    
     def __init__(self):
         """Initialize services."""
         self.chroma = ChromaService()
+        self.rag = RAGService()
         self.ai = AIService()
     
     async def _retrieve_content(self, topic: str) -> str:
         """
         Retrieve top 20 most relevant documents from ChromaDB.
         Let the LLM handle content validation and relevance filtering.
+        Supports multi-topic queries (comma-separated topics).
         
         Args:
-            topic: Topic to search for
+            topic: Topic to search for (can be single topic or multiple topics like "Topic1, Topic2, and Topic3")
             
         Returns:
             Combined content from top documents
@@ -43,29 +155,65 @@ class QuizService:
             HTTPException: If no documents found at all
         """
         try:
-            # Clean query for better embedding
             import re
-            # Remove parentheses and special chars, keep alphanumeric and spaces
-            clean_topic = re.sub(r'[^\w\s]', ' ', topic)
-            clean_topic = ' '.join(clean_topic.split())  # Normalize whitespace
             
-            logger.info(f"Searching for topic: '{topic}' (cleaned: '{clean_topic}')")
+            # Check if multi-topic (contains "and" or multiple commas)
+            is_multi_topic = ", and " in topic or (topic.count(",") >= 2)
             
-            # Get top 20 documents - ChromaDB's embedding model handles similarity
-            results = self.chroma.search_documents(
-                query=clean_topic,
-                collection_name=None,  # Search all collections
-                n_results=20  # Get top 20, let LLM decide what's relevant
-            )
-            
-            if not results or not results.get('documents') or len(results['documents'][0]) == 0:
-                raise HTTPException(
-                    status_code=404,
-                    detail=f"I don't have any course material in the database. Please upload relevant documents first."
+            if is_multi_topic:
+                # Multi-topic: search each topic separately and combine results
+                topic_list = [t.strip() for t in topic.replace(" and ", ",").split(",")]
+                all_documents = []
+                
+                logger.info(f"Multi-topic query detected: {topic_list}")
+                
+                for single_topic in topic_list:
+                    try:
+                        # Clean query for better embedding
+                        clean_topic = re.sub(r'[^\w\s]', ' ', single_topic)
+                        clean_topic = ' '.join(clean_topic.split())  # Normalize whitespace
+                        
+                        # Use LangChain retriever
+                        retriever = self.rag.get_retriever(collection_name=None, k=10)
+                        docs = retriever.invoke(clean_topic)  # LangChain 1.0+ uses invoke instead of get_relevant_documents
+                        if docs:
+                            all_documents.extend([doc.page_content for doc in docs])
+                    except Exception as e:
+                        logger.warning(f"Failed to search topic '{single_topic}': {e}")
+                
+                # Deduplicate and limit to top 20
+                unique_docs = list(dict.fromkeys(all_documents))[:20]
+                if not unique_docs:
+                    raise HTTPException(
+                        status_code=404,
+                        detail="No course material found for selected topics. Please upload relevant documents first."
+                    )
+                documents = unique_docs
+                logger.info(f"Retrieved {len(documents)} unique documents from {len(topic_list)} topics")
+            else:
+                # Single topic - existing logic
+                # Clean query for better embedding
+                clean_topic = re.sub(r'[^\w\s]', ' ', topic)
+                clean_topic = ' '.join(clean_topic.split())  # Normalize whitespace
+                
+                logger.info(f"Searching for topic: '{topic}' (cleaned: '{clean_topic}')")
+                
+                # Use LangChain retriever to get top 20 documents
+                retriever = self.rag.get_retriever(
+                    collection_name=None,  # Search all collections
+                    k=20  # Get top 20, let LLM decide what's relevant
                 )
-            
-            documents = results['documents'][0]
-            logger.info(f"Retrieved {len(documents)} documents from ChromaDB")
+                
+                retrieved_docs = retriever.invoke(clean_topic)  # LangChain 1.0+ uses invoke instead of get_relevant_documents
+                
+                if not retrieved_docs:
+                    raise HTTPException(
+                        status_code=404,
+                        detail=f"I don't have any course material in the database. Please upload relevant documents first."
+                    )
+                
+                documents = [doc.page_content for doc in retrieved_docs]
+                logger.info(f"Retrieved {len(documents)} documents using LangChain retriever")
             
             # Combine all documents - no filtering, let LLM handle it
             content = "\n\n".join(documents)
@@ -88,6 +236,56 @@ class QuizService:
                 detail=f"Failed to retrieve course content: {str(e)}"
             )
     
+    def _select_random_topics(self, count: int = 3) -> List[str]:
+        """Select random topics from predefined list using random indices."""
+        if len(self.AVAILABLE_TOPICS) < count:
+            raise ValueError(f"Not enough topics available (need {count}, have {len(self.AVAILABLE_TOPICS)})")
+        selected = random.sample(self.AVAILABLE_TOPICS, count)
+        logger.info(f"Randomly selected {count} topics: {selected}")
+        return selected
+    
+    def _select_random_difficulty(self) -> str:
+        """Select random difficulty from predefined list."""
+        difficulty = random.choice(self.AVAILABLE_DIFFICULTIES)
+        logger.info(f"Randomly selected difficulty: {difficulty}")
+        return difficulty
+    
+    def _combine_topics_string(self, selected_topics: List[str]) -> str:
+        """Combine topics into readable string format."""
+        if len(selected_topics) == 1:
+            return selected_topics[0]
+        elif len(selected_topics) == 2:
+            return f"{selected_topics[0]} and {selected_topics[1]}"
+        else:
+            return ", ".join(selected_topics[:-1]) + f", and {selected_topics[-1]}"
+    
+    def _randomize_question_distribution(self, total_questions: int) -> Tuple[int, int, int]:
+        """Randomly distribute questions across types with weighted distribution."""
+        if total_questions < 3:
+            # Simple distribution for small quizzes
+            num_mcq = max(1, total_questions // 2)
+            num_blanks = max(0, (total_questions - num_mcq) // 2)
+            num_descriptive = total_questions - num_mcq - num_blanks
+        else:
+            # Ensure at least 1 of each type
+            num_mcq = 1
+            num_blanks = 1
+            num_descriptive = 1
+            remaining = total_questions - 3
+            
+            # Weighted random: MCQ=55%, Blanks=35%, Descriptive=10%
+            for _ in range(remaining):
+                rand = random.random()
+                if rand < 0.55:
+                    num_mcq += 1
+                elif rand < 0.90:
+                    num_blanks += 1
+                else:
+                    num_descriptive += 1
+        
+        logger.info(f"Random distribution: MCQ={num_mcq}, Blanks={num_blanks}, Descriptive={num_descriptive}")
+        return (num_mcq, num_blanks, num_descriptive)
+    
     async def generate_quiz(
         self,
         request: QuizGenerateRequest,
@@ -95,14 +293,32 @@ class QuizService:
     ) -> QuizResponse:
         """
         Generate quiz and save to database.
-        Supports both natural language and structured input.
+        Supports random mode, natural language, and structured input.
         Returns quiz WITHOUT answers.
         
         Raises:
             HTTPException: For various error conditions (404, 400, 500)
         """
+        # Handle random mode - everything is auto-selected
+        if request.random:
+            # Select 3 random topics from predefined list
+            selected_topics = self._select_random_topics(3)
+            topic = self._combine_topics_string(selected_topics)
+            
+            # Select random difficulty
+            difficulty = self._select_random_difficulty()
+            
+            # Randomize question distribution
+            total_questions = request.total_questions or 10
+            num_mcq, num_blanks, num_descriptive = self._randomize_question_distribution(total_questions)
+            
+            quiz_description = f"Random quiz covering {topic}"
+            
+            logger.info(f"Random quiz: topics={selected_topics}, difficulty={difficulty}, "
+                       f"distribution=({num_mcq}, {num_blanks}, {num_descriptive}), "
+                       f"total={total_questions}")
         # Determine mode and parse if needed
-        if request.quiz_description:
+        elif request.quiz_description:
             # Sanitize input to prevent prompt injection
             sanitized_description = sanitize_quiz_description(request.quiz_description)
             

@@ -1,0 +1,431 @@
+{
+  "timestamp": "2025-11-16T16:20:53.839630",
+  "question": "what is rsa encruption?",
+  "search_query": "RSA what is rsa encruption what is rsa encruption?",
+  "retrieved_documents_count": 10,
+  "documents": [
+    {
+      "chunk_number": 1,
+      "content": "Why ECC? •In case of ECC, we are able touse smaller primes, or smaller finite fields, and achieve a level of security comparable to that of RSA•ECC has lower computational requirements. For this reason, ECC algorithms can be easily implemented on smart cards, pagers, or mobile devices. Some smart cards can only work with ECC. \n",
+      "content_length": 329,
+      "metadata": {
+        "chunk_index": 0,
+        "page_number": 8,
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "collection_name": "batch_1763289537"
+      },
+      "citation": {
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 8,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 8 of 1763289537.975727_Lecture 25_slides.pdf"
+      },
+      "human_readable_label": "Lecture 25, Page 8"
+    },
+    {
+      "chunk_number": 2,
+      "content": "Elliptic Curve Cryptography (ECC)•Originally independently proposed by Neal Koblitz(University of Washington) and Victor Miller (IBM) in 1985. •ECC was proposed as an alternative to other public key encryption algorithms, for example RSA. •All ECC schemes are public key CPSC 467: Cryptography and Computer Security , Michael J. Fischer, 2017, https://zoo.cs.yale.edu/classes/cs467/2017f/lectures/ln13.pdf \n",
+      "content_length": 407,
+      "metadata": {
+        "collection_name": "batch_1763289537",
+        "chunk_index": 0,
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 5
+      },
+      "citation": {
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 5,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 5 of 1763289537.975727_Lecture 25_slides.pdf"
+      },
+      "human_readable_label": "Lecture 25, Page 5"
+    },
+    {
+      "chunk_number": 3,
+      "content": "Summary•ECC achieves strong security with small keys.•Basedonthehardness of ECDLP.•Powersmanymodern systems (TLS, blockchain, mobile apps). ",
+      "content_length": 140,
+      "metadata": {
+        "collection_name": "batch_1763289537",
+        "chunk_index": 0,
+        "page_number": 13,
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf"
+      },
+      "citation": {
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 13,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 13 of 1763289537.975727_Lecture 25_slides.pdf"
+      },
+      "human_readable_label": "Lecture 25, Page 13"
+    },
+    {
+      "chunk_number": 4,
+      "content": "Requirements•Two requirements for secure use of symmetric encryption:•a strong encryption algorithm•a secret key known only to sender / receiverY = EK(X)X = DK(Y)•assume encryption algorithm is known•the security of symmetric encryption depends on the secrecy of the key•implies a secure channel to distribute key",
+      "content_length": 313,
+      "metadata": {
+        "page_number": 15,
+        "document_type": "pdf",
+        "chunk_index": 0,
+        "collection_name": "batch_1763289537",
+        "source_file": "1763289538.049382_Lecture 3_slides.pdf"
+      },
+      "citation": {
+        "source_file": "1763289538.049382_Lecture 3_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 15,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 15 of 1763289538.049382_Lecture 3_slides.pdf"
+      },
+      "human_readable_label": "Lecture 3, Page 15"
+    },
+    {
+      "chunk_number": 5,
+      "content": "Hash Function: Examples•MD5•Output: 128 bits•Security: Completely broken•SHA-1•Output: 160 bits•Security: Completely broken in 2017•Was known to be weak before 2017, but still used sometimes•SHA-2•Output: 256, 384, or 512 bits (sometimes labeled SHA-256, SHA-384, SHA-512)•Not currently broken, but some variants are vulnerable to a length extension attack•Current standard•SHA-3 (Keccak)•Output: 256, 384, or 512 bits•Current standard (not meant to replace SHA-2, just a different construction)",
+      "content_length": 495,
+      "metadata": {
+        "collection_name": "batch_1763289537",
+        "document_type": "pdf",
+        "page_number": 14,
+        "source_file": "1763289538.009965_Lecture 15_slides.pdf",
+        "chunk_index": 0
+      },
+      "citation": {
+        "source_file": "1763289538.009965_Lecture 15_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 14,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 14 of 1763289538.009965_Lecture 15_slides.pdf"
+      },
+      "human_readable_label": "Lecture 15, Page 14"
+    },
+    {
+      "chunk_number": 6,
+      "content": "Diffie-Hellman: Security\n",
+      "content_length": 25,
+      "metadata": {
+        "document_type": "pdf",
+        "chunk_index": 0,
+        "collection_name": "batch_1763289537",
+        "page_number": 12,
+        "source_file": "1763289537.979603_Lecture 24_slides.pdf"
+      },
+      "citation": {
+        "source_file": "1763289537.979603_Lecture 24_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 12,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 12 of 1763289537.979603_Lecture 24_slides.pdf"
+      },
+      "human_readable_label": "Lecture 24, Page 12"
+    },
+    {
+      "chunk_number": 7,
+      "content": "TLS Key Agreement with ECDH \nRFC  8446: The Transport Layer Security (TLS) Protocol Version 1.3,  https://datatracker.ietf.org/doc/html/rfc8446 \n",
+      "content_length": 145,
+      "metadata": {
+        "chunk_index": 0,
+        "document_type": "pdf",
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "collection_name": "batch_1763289537",
+        "page_number": 12
+      },
+      "citation": {
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 12,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 12 of 1763289537.975727_Lecture 25_slides.pdf"
+      },
+      "human_readable_label": "Lecture 25, Page 12"
+    },
+    {
+      "chunk_number": 8,
+      "content": "ECC Key Generation•Let k be an integer and G a point on E. k×Gis defined as adding G to itself k times. •Once we calculate Q = k ×G, it is extremely difficult to recover k from Q. The only way to recover k from Q is to try every possible repeated addition of G. •Q: Does it sound familiar? ",
+      "content_length": 290,
+      "metadata": {
+        "collection_name": "batch_1763289537",
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "chunk_index": 0,
+        "document_type": "pdf",
+        "page_number": 9
+      },
+      "citation": {
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 9,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 9 of 1763289537.975727_Lecture 25_slides.pdf"
+      },
+      "human_readable_label": "Lecture 25, Page 9"
+    },
+    {
+      "chunk_number": 9,
+      "content": "DHKE in Python Cryptography Library•https://cryptography.io/en/latest/hazmat/primitives/asymmetric/",
+      "content_length": 99,
+      "metadata": {
+        "collection_name": "batch_1763289537",
+        "chunk_index": 0,
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 3
+      },
+      "citation": {
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 3,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 3 of 1763289537.975727_Lecture 25_slides.pdf"
+      },
+      "human_readable_label": "Lecture 25, Page 3"
+    },
+    {
+      "chunk_number": 10,
+      "content": "Take home exercises•SW, “Network Security Essentials”, 6thEdition, 2017 •Problems –3.21Consider a Diffie-Hellman scheme with a common prime 𝑞= 11 and a primitive root 𝛼= 2.a. if user A has public key 𝑌!= 9, what is A’s private key 𝑋!?b. If user B has public key 𝑌#= 3, what is the shared secret key 𝐾?",
+      "content_length": 301,
+      "metadata": {
+        "collection_name": "batch_1763289537",
+        "page_number": 4,
+        "document_type": "pdf",
+        "chunk_index": 0,
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf"
+      },
+      "citation": {
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 4,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 4 of 1763289537.975727_Lecture 25_slides.pdf"
+      },
+      "human_readable_label": "Lecture 25, Page 4"
+    }
+  ],
+  "context": {
+    "formatted_content": "[Lecture 25, Page 8]:\nWhy ECC? •In case of ECC, we are able touse smaller primes, or smaller finite fields, and achieve a level of security comparable to that of RSA•ECC has lower computational requirements. For this reason, ECC algorithms can be easily implemented on smart cards, pagers, or mobile devices. Some smart cards can only work with ECC. \n\n\n[Lecture 25, Page 5]:\nElliptic Curve Cryptography (ECC)•Originally independently proposed by Neal Koblitz(University of Washington) and Victor Miller (IBM) in 1985. •ECC was proposed as an alternative to other public key encryption algorithms, for example RSA. •All ECC schemes are public key CPSC 467: Cryptography and Computer Security , Michael J. Fischer, 2017, https://zoo.cs.yale.edu/classes/cs467/2017f/lectures/ln13.pdf \n\n\n[Lecture 25, Page 13]:\nSummary•ECC achieves strong security with small keys.•Basedonthehardness of ECDLP.•Powersmanymodern systems (TLS, blockchain, mobile apps). \n\n[Lecture 3, Page 15]:\nRequirements•Two requirements for secure use of symmetric encryption:•a strong encryption algorithm•a secret key known only to sender / receiverY = EK(X)X = DK(Y)•assume encryption algorithm is known•the security of symmetric encryption depends on the secrecy of the key•implies a secure channel to distribute key\n\n[Lecture 15, Page 14]:\nHash Function: Examples•MD5•Output: 128 bits•Security: Completely broken•SHA-1•Output: 160 bits•Security: Completely broken in 2017•Was known to be weak before 2017, but still used sometimes•SHA-2•Output: 256, 384, or 512 bits (sometimes labeled SHA-256, SHA-384, SHA-512)•Not currently broken, but some variants are vulnerable to a length extension attack•Current standard•SHA-3 (Keccak)•Output: 256, 384, or 512 bits•Current standard (not meant to replace SHA-2, just a different construction)\n\n[Lecture 24, Page 12]:\nDiffie-Hellman: Security\n\n\n[Lecture 25, Page 12]:\nTLS Key Agreement with ECDH \nRFC  8446: The Transport Layer Security (TLS) Protocol Version 1.3,  https://datatracker.ietf.org/doc/html/rfc8446 \n\n\n[Lecture 25, Page 9]:\nECC Key Generation•Let k be an integer and G a point on E. k×Gis defined as adding G to itself k times. •Once we calculate Q = k ×G, it is extremely difficult to recover k from Q. The only way to recover k from Q is to try every possible repeated addition of G. •Q: Does it sound familiar? \n\n[Lecture 25, Page 3]:\nDHKE in Python Cryptography Library•https://cryptography.io/en/latest/hazmat/primitives/asymmetric/\n\n[Lecture 25, Page 4]:\nTake home exercises•SW, “Network Security Essentials”, 6thEdition, 2017 •Problems –3.21Consider a Diffie-Hellman scheme with a common prime 𝑞= 11 and a primitive root 𝛼= 2.a. if user A has public key 𝑌!= 9, what is A’s private key 𝑋!?b. If user B has public key 𝑌#= 3, what is the shared secret key 𝐾?",
+    "content_length": 2786,
+    "word_count": 402,
+    "truncated": false
+  },
+  "citations": {
+    "total_count": 10,
+    "all_citations": [
+      {
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 8,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 8 of 1763289537.975727_Lecture 25_slides.pdf"
+      },
+      {
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 5,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 5 of 1763289537.975727_Lecture 25_slides.pdf"
+      },
+      {
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 13,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 13 of 1763289537.975727_Lecture 25_slides.pdf"
+      },
+      {
+        "source_file": "1763289538.049382_Lecture 3_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 15,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 15 of 1763289538.049382_Lecture 3_slides.pdf"
+      },
+      {
+        "source_file": "1763289538.009965_Lecture 15_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 14,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 14 of 1763289538.009965_Lecture 15_slides.pdf"
+      },
+      {
+        "source_file": "1763289537.979603_Lecture 24_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 12,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 12 of 1763289537.979603_Lecture 24_slides.pdf"
+      },
+      {
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 12,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 12 of 1763289537.975727_Lecture 25_slides.pdf"
+      },
+      {
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 9,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 9 of 1763289537.975727_Lecture 25_slides.pdf"
+      },
+      {
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 3,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 3 of 1763289537.975727_Lecture 25_slides.pdf"
+      },
+      {
+        "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 4,
+        "slide_number": null,
+        "collection": "batch_1763289537",
+        "formatted": "Page 4 of 1763289537.975727_Lecture 25_slides.pdf"
+      }
+    ],
+    "chunk_citations": [
+      {
+        "chunk_number": 1,
+        "citation": {
+          "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 8,
+          "slide_number": null,
+          "collection": "batch_1763289537",
+          "formatted": "Page 8 of 1763289537.975727_Lecture 25_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 2,
+        "citation": {
+          "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 5,
+          "slide_number": null,
+          "collection": "batch_1763289537",
+          "formatted": "Page 5 of 1763289537.975727_Lecture 25_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 3,
+        "citation": {
+          "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 13,
+          "slide_number": null,
+          "collection": "batch_1763289537",
+          "formatted": "Page 13 of 1763289537.975727_Lecture 25_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 4,
+        "citation": {
+          "source_file": "1763289538.049382_Lecture 3_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 15,
+          "slide_number": null,
+          "collection": "batch_1763289537",
+          "formatted": "Page 15 of 1763289538.049382_Lecture 3_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 5,
+        "citation": {
+          "source_file": "1763289538.009965_Lecture 15_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 14,
+          "slide_number": null,
+          "collection": "batch_1763289537",
+          "formatted": "Page 14 of 1763289538.009965_Lecture 15_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 6,
+        "citation": {
+          "source_file": "1763289537.979603_Lecture 24_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 12,
+          "slide_number": null,
+          "collection": "batch_1763289537",
+          "formatted": "Page 12 of 1763289537.979603_Lecture 24_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 7,
+        "citation": {
+          "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 12,
+          "slide_number": null,
+          "collection": "batch_1763289537",
+          "formatted": "Page 12 of 1763289537.975727_Lecture 25_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 8,
+        "citation": {
+          "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 9,
+          "slide_number": null,
+          "collection": "batch_1763289537",
+          "formatted": "Page 9 of 1763289537.975727_Lecture 25_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 9,
+        "citation": {
+          "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 3,
+          "slide_number": null,
+          "collection": "batch_1763289537",
+          "formatted": "Page 3 of 1763289537.975727_Lecture 25_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 10,
+        "citation": {
+          "source_file": "1763289537.975727_Lecture 25_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 4,
+          "slide_number": null,
+          "collection": "batch_1763289537",
+          "formatted": "Page 4 of 1763289537.975727_Lecture 25_slides.pdf"
+        },
+        "distance": null
+      }
+    ]
+  }
+}

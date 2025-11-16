@@ -22,8 +22,26 @@ async def generate_quiz(
     """
     Generate a quiz on a specific topic with AI-powered security.
     
+    **Modes:**
+    1. Random Mode (NEW):
+       - Set random=true
+       - System automatically selects 3 random topics from predefined list
+       - System randomly selects difficulty (easy/medium/hard)
+       - System randomly distributes question types (MCQ/blanks/descriptive)
+       - Optional: total_questions (defaults to 10)
+       - Example: {"random": true, "total_questions": 10}
+    
+    2. Natural Language Mode:
+       - quiz_description: Free-form text describing what you want
+       - difficulty: easy/medium/hard
+    
+    3. Structured Mode:
+       - topic, total_questions, num_mcq, num_blanks, num_descriptive
+       - difficulty: easy/medium/hard
+    
     **Features:**
     - Natural language quiz descriptions or structured parameters
+    - Random quiz generation with auto-selected topics and question types
     - Retrieves relevant content from ChromaDB based on topic
     - Uses Groq AI to generate questions
     - Saves quiz to database with answers

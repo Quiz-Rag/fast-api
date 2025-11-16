@@ -1,0 +1,128 @@
+{
+  "timestamp": "2025-11-16T18:13:13.985195",
+  "question": "Like DES, AES also uses Feistel Structure.",
+  "search_query": "AES DES Like DES AES also uses Feistel Structure Like DES, AES also uses Feistel Structure. b) 4 keys does the Triple DES algorithm use?",
+  "retrieved_documents_count": 3,
+  "documents": [
+    {
+      "chunk_number": 1,
+      "content": "Feistel Encryption and Decryption \n\n\nDES encryption\n•64 bits plaintext•56 bits effectivekey length\n\nDES Weakness•short length key (56 bits) is not secure enough. Brutal force search takes short time. \n\nTriple DES (3DES)\nDecrypting with the wrong key will further convolute the output\n\n3DES•Triple DES with three different keys –brute-force complexity 2168•3DES is the FIPS-approved symmetric encryption algorithm•Weakness: slow speed for encryption\nFIPS – Federal Information Processing Standards. The United States' Federal Information Processing Standards are publicly announced standards developed by the National Institute of Standards and Technology for use in computer systems by non-military American government agencies and government contractors\n\nAES•clearly a replacement for DES was needed•have theoretical attacks that can break it•have demonstrated exhaustive key search attacks•can use Triple-DES –but slow with small blocks•US NIST issued call for ciphers in 1997•15 candidates accepted in Jun 98 •5 were short-listed in Aug-99 •Rijndael was selected as the AES in Oct-2000•issued as FIPS PUB 197 standard in Nov-2001 \n\nCriteria to evaluate AES•General security•Software implementations•Restricted-space environments•Hardware implementations•Attacks on implementations•Encryption versus decryption•Key agility•Other versatility and flexibility•Potential for instruction-level parallelismCryptographic Standards and Guidelines | CSRC (nist.gov)",
+      "content_length": 1458,
+      "metadata": {
+        "collection_name": "batch_1763296567",
+        "document_type": "pdf",
+        "slide_number": 6,
+        "chunk_index": 0,
+        "source_file": "Lecture 6_slides.pdf"
+      },
+      "citation": {
+        "source_file": "Lecture 6_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 6,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 6"
+      },
+      "human_readable_label": "Slide 6"
+    },
+    {
+      "chunk_number": 2,
+      "content": "AES Specification•symmetric block cipher •128-bit data, 128/192/256-bit keys •stronger & faster than Triple-DES •provide full specification & design details •both C & Java implementations•NIST have released all submissions & unclassified analyseshttps://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/aes-development/Rijndael-ammended.pdf\n\nThe AES Cipher -Rijndael •an iterative rather than feistelcipher•treats data in 4 groups of 4 bytes•operates an entire block in every round•designed to be:•resistant against known-plaintext attacks•speed and code compactness on many CPUs•design simplicity\n\nRijndael•processes data as 4 groups of 4 bytes (state) = 128 bits•has 10/12/14 rounds in which state undergoes: •byte substitution (1 S-box used on every byte) •shift rows (permute bytes row by row) •mix columns (alter each byte in a column as a function of all ofthe bytes in the column) •add round key (XOR state with key material) •128-bit keys –10 rounds, 192-bit keys –12 rounds, 256-bit keys –14 rounds\n\n\nAES Encryption and Decryption\n\n\nAES encryption round",
+      "content_length": 1096,
+      "metadata": {
+        "source_file": "Lecture 6_slides.pdf",
+        "document_type": "pdf",
+        "collection_name": "batch_1763296567",
+        "slide_number": 6,
+        "chunk_index": 1
+      },
+      "citation": {
+        "source_file": "Lecture 6_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 6,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 6"
+      },
+      "human_readable_label": "Slide 6"
+    },
+    {
+      "chunk_number": 3,
+      "content": "Two basic types•Block Ciphers •Typically64, 128 bitblocks•A k-bit plaintext block maps to a k-bit ciphertext block •Usually employ Feistel structure •Stream Ciphers•A key is used to generate a stream of pseudo-random bits –key stream•Just XOR plaintext bits with the key stream for encryption •For decryption generate the key stream and XOR with the ciphertext! \n\nSymmetric Block Encryption\n\nBlock cipher•the most commonly usedsymmetric encryption algorithms•input: fixed-size blocks (Typically 64, 128 bitblocks), output: equal size blocks•provide secrecy and/or authentication services•Data Encryption Standard (DES), triple DES (3DES), and the Advanced Encryption Standard (AES)s•Usually employ Feistel structure \n\nFeistel Cipher Structure\n\nFeistel Cipher Structure•most symmetric block ciphers are based on a Feistel Cipher Structure•based on the two primitive cryptographic operations•substitution(S-box)•permutation (P-box)•provide confusionand diffusionof message \n\nFeistel Cipher Structure•Horst Feistel devised the feistelcipher in the 1973•based on concept of invertible product cipher•partitions input block into two halves•process through multiple rounds which•perform a substitution on left data half•based on round function of right half & subkey•then have permutation swapping halves•implements Shannon’s substitution-permutation network concept\n\nFeistel Encryption and Decryption",
+      "content_length": 1395,
+      "metadata": {
+        "source_file": "Lecture 5_slides.pdf",
+        "document_type": "pdf",
+        "collection_name": "batch_1763296567",
+        "chunk_index": 0,
+        "slide_number": 5
+      },
+      "citation": {
+        "source_file": "Lecture 5_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 5,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 5"
+      },
+      "human_readable_label": "Slide 5"
+    }
+  ],
+  "context": {
+    "formatted_content": "[Slide 6]:\nFeistel Encryption and Decryption \n\n\nDES encryption\n•64 bits plaintext•56 bits effectivekey length\n\nDES Weakness•short length key (56 bits) is not secure enough. Brutal force search takes short time. \n\nTriple DES (3DES)\nDecrypting with the wrong key will further convolute the output\n\n3DES•Triple DES with three different keys –brute-force complexity 2168•3DES is the FIPS-approved symmetric encryption algorithm•Weakness: slow speed for encryption\nFIPS – Federal Information Processing Standards. The United States' Federal Information Processing Standards are publicly announced standards developed by the National Institute of Standards and Technology for use in computer systems by non-military American government agencies and government contractors\n\nAES•clearly a replacement for DES was needed•have theoretical attacks that can break it•have demonstrated exhaustive key search attacks•can use Triple-DES –but slow with small blocks•US NIST issued call for ciphers in 1997•15 candidates accepted in Jun 98 •5 were short-listed in Aug-99 •Rijndael was selected as the AES in Oct-2000•issued as FIPS PUB 197 standard in Nov-2001 \n\nCriteria to evaluate AES•General security•Software implementations•Restricted-space environments•Hardware implementations•Attacks on implementations•Encryption versus decryption•Key agility•Other versatility and flexibility•Potential for instruction-level parallelismCryptographic Standards and Guidelines | CSRC (nist.gov)\n\n[Slide 6]:\nAES Specification•symmetric block cipher •128-bit data, 128/192/256-bit keys •stronger & faster than Triple-DES •provide full specification & design details •both C & Java implementations•NIST have released all submissions & unclassified analyseshttps://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/aes-development/Rijndael-ammended.pdf\n\nThe AES Cipher -Rijndael •an iterative rather than feistelcipher•treats data in 4 groups of 4 bytes•operates an entire block in every round•designed to be:•resistant against known-plaintext attacks•speed and code compactness on many CPUs•design simplicity\n\nRijndael•processes data as 4 groups of 4 bytes (state) = 128 bits•has 10/12/14 rounds in which state undergoes: •byte substitution (1 S-box used on every byte) •shift rows (permute bytes row by row) •mix columns (alter each byte in a column as a function of all ofthe bytes in the column) •add round key (XOR state with key material) •128-bit keys –10 rounds, 192-bit keys –12 rounds, 256-bit keys –14 rounds\n\n\nAES Encryption and Decryption\n\n\nAES encryption round\n\n[Slide 5]:\nTwo basic types•Block Ciphers •Typically64, 128 bitblocks•A k-bit plaintext block maps to a k-bit ciphertext block •Usually employ Feistel structure •Stream Ciphers•A key is used to generate a stream of pseudo-random bits –key stream•Just XOR plaintext bits with the key stream for encryption •For decryption generate the key stream and XOR with the ciphertext! \n\nSymmetric Block Encryption\n\nBlock cipher•the most commonly usedsymmetric encryption algorithms•input: fixed-size blocks (Typically 64, 128 bitblocks), output: equal size blocks•provide secrecy and/or authentication services•Data Encryption Standard (DES), triple DES (3DES), and the Advanced Encryption Standard (AES)s•Usually employ Feistel structure \n\nFeistel Cipher Structure\n\nFeistel Cipher Structure•most symmetric block ciphers are based on a Feistel Cipher Structure•based on the two primitive cryptographic operations•substitution(S-box)•permutation (P-box)•provide confusionand diffusionof message \n\nFeistel Cipher Structure•Horst Feistel devised the feistelcipher in the 1973•based on concept of invertible product cipher•partitions input block into two halves•process through multiple rounds which•perform a substitution on left data half•based on round function of right half & subkey•then have permutation swapping halves•implements Shannon’s substitution-permutation network concept\n\nFeistel Encryption and Decryption",
+    "content_length": 3986,
+    "word_count": 500,
+    "truncated": false
+  },
+  "citations": {
+    "total_count": 2,
+    "all_citations": [
+      {
+        "source_file": "Lecture 6_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 6,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 6"
+      },
+      {
+        "source_file": "Lecture 5_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 5,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 5"
+      }
+    ],
+    "chunk_citations": [
+      {
+        "chunk_number": 1,
+        "citation": {
+          "source_file": "Lecture 6_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 6,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 6"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 2,
+        "citation": {
+          "source_file": "Lecture 6_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 6,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 6"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 3,
+        "citation": {
+          "source_file": "Lecture 5_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 5,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 5"
+        },
+        "distance": null
+      }
+    ]
+  }
+}

@@ -243,6 +243,52 @@ async def get_job_status(job_id: str):
             detail="Job not found"
         )
 
+    # For batch jobs, ensure all file processing information is returned
+    if job.is_batch and job.batch:
+        job_dict = job.model_dump(mode='json')
+        if job_dict.get('batch'):
+            # Ensure files list exists and is not None
+            files = job_dict['batch'].get('files', [])
+            if files is None:
+                files = []
+            
+            # Ensure all file entries have required fields
+            for file_info in files:
+                if 'chunks' not in file_info:
+                    file_info['chunks'] = 0
+                if 'status' not in file_info:
+                    file_info['status'] = 'pending'
+            
+            # Calculate values, ensuring they're always integers
+            successful_files = int(sum(
+                1 for f in files if f.get('status') == 'completed'
+            ))
+            failed_files = int(sum(
+                1 for f in files if f.get('status') == 'failed'
+            ))
+            total_chunks = int(sum(
+                int(f.get('chunks', 0)) for f in files if f.get('status') == 'completed'
+            ))
+            
+            # Update batch object with computed values and all files
+            job_dict['batch']['files'] = files
+            job_dict['batch']['successful_files'] = successful_files
+            job_dict['batch']['failed_files'] = failed_files
+            job_dict['batch']['total_chunks'] = total_chunks
+            
+            # Add at root level for frontend compatibility (always integers, never None)
+            job_dict['successful_files'] = successful_files
+            job_dict['failed_files'] = failed_files
+            job_dict['total_chunks'] = total_chunks
+            
+            # Only include text_length if it exists and is greater than 0
+            metadata = job_dict.get('metadata') or {}
+            text_length = metadata.get('text_length', 0)
+            if text_length and text_length > 0:
+                job_dict['text_length'] = int(text_length)
+        
+        return job_dict
+    
     return job
 
 
@@ -313,8 +359,18 @@ async def search_documents(
         
         # Get the collection
         try:
-            from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
-            embedding_function = DefaultEmbeddingFunction()
+            from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
+            
+            if not settings.openai_api_key:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="OpenAI API key is required for embeddings. Please set OPENAI_API_KEY in your .env file."
+                )
+            
+            embedding_function = OpenAIEmbeddingFunction(
+                api_key=settings.openai_api_key,
+                model_name="text-embedding-3-small"
+            )
             
             collection = client.get_collection(
                 name=collection_name,

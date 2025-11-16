@@ -1,8 +1,0 @@
-Test Document 2
-
-This is the second test document.
-
-Topics Covered:
-- Kerberos Protocol
-- Public Key Infrastructure
-- SSL/TLS Security

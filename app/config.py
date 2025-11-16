@@ -5,7 +5,7 @@ from typing import Optional
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
-    # OpenAI Configuration (Optional - not used with ChromaDB default embeddings)
+    # OpenAI Configuration (Required for embeddings - uses text-embedding-3-small model)
     openai_api_key: Optional[str] = None
 
     # ChromaDB Configuration
@@ -33,7 +33,10 @@ class Settings(BaseSettings):
     
     # Groq AI Configuration
     groq_api_key: Optional[str] = None
-    groq_model: str = "llama-3.1-8b-instant"
+    groq_model: str = "llama-3.3-70b-versatile"
+    
+    # Tavily Web Search Configuration
+    tavily_api_key: Optional[str] = None
     
     # Quiz Configuration
     max_questions_per_quiz: int = 20

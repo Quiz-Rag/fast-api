@@ -133,3 +133,59 @@ def create_debug_sse(
         "context_preview": context_preview,
         "rsa_mentions": rsa_mentions
     })
+
+
+def create_citation_sse(session_id: str, citations: list) -> str:
+    """
+    Create an SSE citation message.
+    
+    Args:
+        session_id: Chat session ID
+        citations: List of citation dictionaries
+    
+    Returns:
+        Formatted SSE citation message
+    """
+    return format_sse_message({
+        "type": "citation",
+        "session_id": session_id,
+        "citations": citations
+    })
+
+
+def create_message_sse(session_id: str, content: str, citations: list = None) -> str:
+    """
+    Create an SSE message with content and citations.
+    
+    Args:
+        session_id: Chat session ID
+        content: Message content
+        citations: Optional list of citations
+    
+    Returns:
+        Formatted SSE message
+    """
+    data = {
+        "type": "message",
+        "session_id": session_id,
+        "content": content
+    }
+    if citations:
+        data["citations"] = citations
+    return format_sse_message(data)
+
+
+def create_done_sse(session_id: str) -> str:
+    """
+    Create an SSE done message.
+    
+    Args:
+        session_id: Chat session ID
+    
+    Returns:
+        Formatted SSE done message
+    """
+    return format_sse_message({
+        "type": "done",
+        "session_id": session_id
+    })

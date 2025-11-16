@@ -36,6 +36,21 @@ class BatchInfo(BaseModel):
     current_file: Optional[str] = None
     overall_progress: float = Field(ge=0, le=100)
     files: List[BatchFileInfo] = []
+    
+    @property
+    def successful_files(self) -> int:
+        """Calculate number of successfully processed files."""
+        return sum(1 for f in self.files if f.status == "completed")
+    
+    @property
+    def failed_files(self) -> int:
+        """Calculate number of failed files."""
+        return sum(1 for f in self.files if f.status == "failed")
+    
+    @property
+    def total_chunks(self) -> int:
+        """Calculate total chunks from all completed files."""
+        return sum(f.chunks for f in self.files if f.status == "completed")
 
 
 class JobBase(BaseModel):

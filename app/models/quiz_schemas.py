@@ -13,21 +13,30 @@ class QuizGenerateRequest(BaseModel):
     """
     Request model for quiz generation.
     
-    Supports two modes:
-    1. Natural Language Mode (Recommended):
+    Supports three modes:
+    1. Random Mode (NEW):
+       - random: true
+       - System automatically selects 3 random topics, random difficulty, and random question types
+       - Optional: total_questions (defaults to 10)
+    
+    2. Natural Language Mode (Recommended):
        - quiz_description: Free-form text describing what you want
        - difficulty: easy/medium/hard
     
-    2. Structured Mode (Backward Compatible):
+    3. Structured Mode (Backward Compatible):
        - topic, total_questions, num_mcq, num_blanks, num_descriptive
        - difficulty: easy/medium/hard
     
     Examples:
+    - Random: {"random": true, "total_questions": 10}
     - "I want 10 questions: 5 from encryption, 3 from RSA, 2 from SQL injection. 
        Make 6 MCQs, 3 fill-in-blanks, and 1 descriptive."
     - "Create a quiz with 8 questions on network security focusing on firewalls 
        and intrusion detection. 5 MCQs and 3 descriptive questions."
     """
+    # Random mode (new)
+    random: Optional[bool] = Field(False, description="Enable random quiz generation (auto-selects topics, difficulty, question types)")
+    
     # Natural language mode (recommended)
     quiz_description: Optional[str] = Field(
         None, 
@@ -48,7 +57,15 @@ class QuizGenerateRequest(BaseModel):
     
     @model_validator(mode='after')
     def validate_quiz_request(self):
-        """Validate that either quiz_description or structured fields are provided."""
+        """Validate that either random mode, quiz_description, or structured fields are provided."""
+        # Random mode: only total_questions is optional (defaults to 10)
+        if self.random:
+            if not self.total_questions:
+                self.total_questions = 10
+            # Ignore all other fields in random mode
+            return self
+        
+        # Existing validation for non-random modes
         has_description = self.quiz_description is not None
         has_structured = all([
             self.topic is not None,
@@ -61,7 +78,7 @@ class QuizGenerateRequest(BaseModel):
         # Must have either description or all structured fields
         if not has_description and not has_structured:
             raise ValueError(
-                'Either provide quiz_description (natural language) OR all structured fields '
+                'Either provide random=true, quiz_description (natural language) OR all structured fields '
                 '(topic, total_questions, num_mcq, num_blanks, num_descriptive)'
             )
         

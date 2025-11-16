@@ -1,8 +1,0 @@
-Test Document 1
-
-This is a test document for batch upload testing.
-
-Network Security Topics:
-- SQL Injection: A code injection technique
-- Cross-Site Scripting (XSS): Web vulnerabilities
-- Authentication: User verification systems

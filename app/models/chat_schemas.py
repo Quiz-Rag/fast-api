@@ -30,12 +30,22 @@ class ChatStartResponse(BaseModel):
     started_at: str
 
 
+class Citation(BaseModel):
+    """Citation information for a document source."""
+    source_file: str
+    document_type: str
+    page_number: Optional[int] = None
+    slide_number: Optional[int] = None
+    formatted: str  # Human-readable format
+
+
 class ChatMessageResponse(BaseModel):
     """Individual message in chat history."""
     role: str  # "user" or "assistant"
     content: str
     created_at: str
     tokens_used: Optional[int] = None
+    citations: List[Citation] = []  # Citations for assistant messages
 
 
 class ChatHistoryResponse(BaseModel):
@@ -85,3 +95,9 @@ class SSEDebugMessage(BaseModel):
     context_length: int
     context_preview: str
     rsa_mentions: int
+
+
+class SSECitationMessage(BaseModel):
+    """SSE message with citation information."""
+    type: str = "citation"
+    citations: List[Citation]

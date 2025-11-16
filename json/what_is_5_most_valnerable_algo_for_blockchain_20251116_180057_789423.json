@@ -1,0 +1,135 @@
+{
+  "timestamp": "2025-11-16T18:00:57.789466",
+  "question": "what is 5 most valnerable algo for blockchain?",
+  "search_query": "what is 5 most valnerable algo for blockchain what is 5 most valnerable algo for blockchain? what is rsa encryption ?",
+  "retrieved_documents_count": 3,
+  "documents": [
+    {
+      "chunk_number": 1,
+      "content": "Public-Key Cryptography Algorithm(RSA)\n\nRSA Public-key encryption•by Rivest, Shamir & Adleman of MIT in 1977 •currently the “work horse” of Internet security•most public key infrastructure (PKI) products•SSL/TLS: certificates and key-exchange•secure e-mail: PGP , Outlook, ….•based on exponentiation in a finite (Galois) field over integers modulo a prime •exponentiation takes O((log n)3) operations (easy)•security due to cost of factoring large integer numbers •factorization takes O(e log n log log n) operations (hard)•uses large integers (eg.1024 bits)\n\nRSA key setup•each user generates a public/private key pair by: •selecting two large primes at random -p, q•computing their system modulus n=p!q•note ø(n)=(p-1)(q-1)•selecting at random the encryption key e•where 1<e<ø(n), gcd(e,ø(n))=1 •solve following equation to find decryption key d•ed=1 mod ø(n)•publish their public encryption key: pk={e,n} •keep secret private decryption key: sk={d,p,q} \n\n\nRSA key generation•users of RSA must:•determine two primes at random -p, q•select either eor dand compute the other•primes p,qmust not be easily derived from modulus n=p.q•means must be sufficiently large•typically guess and use probabilistic test•exponents e, dare inverses, so use Inverse algorithm to compute the other",
+      "content_length": 1280,
+      "metadata": {
+        "chunk_index": 0,
+        "collection_name": "batch_1763296567",
+        "source_file": "Lecture 13_slides.pdf",
+        "slide_number": 13,
+        "document_type": "pdf"
+      },
+      "citation": {
+        "source_file": "Lecture 13_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 13,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 13"
+      },
+      "human_readable_label": "Slide 13"
+    },
+    {
+      "chunk_number": 2,
+      "content": "Availability•Availability: Assures that systems work promptly, and service is not denied to authorized users, ensuring timelyand reliableaccess to and use of information•i.e., denial of service attack\n\nOther security requirements•Authenticity•Accountability•tracible data source, •fault isolation•intrusion detection and prevention, •recovery and legal action•system must keep records of their activities to permit later forensic analysis to trace security breaches or to aid in transaction disputes\n\nQuestion•What security requirements does a blockchain system have achieved? \n\n\nA Hyperledger",
+      "content_length": 593,
+      "metadata": {
+        "chunk_index": 1,
+        "collection_name": "batch_1763296567",
+        "source_file": "Lecture 1_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 1
+      },
+      "citation": {
+        "source_file": "Lecture 1_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 1,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 1"
+      },
+      "human_readable_label": "Slide 1"
+    },
+    {
+      "chunk_number": 3,
+      "content": "Feistel Encryption and Decryption \n\n\nDES encryption\n•64 bits plaintext•56 bits effectivekey length\n\nDES Weakness•short length key (56 bits) is not secure enough. Brutal force search takes short time. \n\nTriple DES (3DES)\nDecrypting with the wrong key will further convolute the output\n\n3DES•Triple DES with three different keys –brute-force complexity 2168•3DES is the FIPS-approved symmetric encryption algorithm•Weakness: slow speed for encryption\nFIPS – Federal Information Processing Standards. The United States' Federal Information Processing Standards are publicly announced standards developed by the National Institute of Standards and Technology for use in computer systems by non-military American government agencies and government contractors\n\nAES•clearly a replacement for DES was needed•have theoretical attacks that can break it•have demonstrated exhaustive key search attacks•can use Triple-DES –but slow with small blocks•US NIST issued call for ciphers in 1997•15 candidates accepted in Jun 98 •5 were short-listed in Aug-99 •Rijndael was selected as the AES in Oct-2000•issued as FIPS PUB 197 standard in Nov-2001 \n\nCriteria to evaluate AES•General security•Software implementations•Restricted-space environments•Hardware implementations•Attacks on implementations•Encryption versus decryption•Key agility•Other versatility and flexibility•Potential for instruction-level parallelismCryptographic Standards and Guidelines | CSRC (nist.gov)",
+      "content_length": 1458,
+      "metadata": {
+        "collection_name": "batch_1763296567",
+        "chunk_index": 0,
+        "source_file": "Lecture 6_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 6
+      },
+      "citation": {
+        "source_file": "Lecture 6_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 6,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 6"
+      },
+      "human_readable_label": "Slide 6"
+    }
+  ],
+  "context": {
+    "formatted_content": "[Slide 13]:\nPublic-Key Cryptography Algorithm(RSA)\n\nRSA Public-key encryption•by Rivest, Shamir & Adleman of MIT in 1977 •currently the “work horse” of Internet security•most public key infrastructure (PKI) products•SSL/TLS: certificates and key-exchange•secure e-mail: PGP , Outlook, ….•based on exponentiation in a finite (Galois) field over integers modulo a prime •exponentiation takes O((log n)3) operations (easy)•security due to cost of factoring large integer numbers •factorization takes O(e log n log log n) operations (hard)•uses large integers (eg.1024 bits)\n\nRSA key setup•each user generates a public/private key pair by: •selecting two large primes at random -p, q•computing their system modulus n=p!q•note ø(n)=(p-1)(q-1)•selecting at random the encryption key e•where 1<e<ø(n), gcd(e,ø(n))=1 •solve following equation to find decryption key d•ed=1 mod ø(n)•publish their public encryption key: pk={e,n} •keep secret private decryption key: sk={d,p,q} \n\n\nRSA key generation•users of RSA must:•determine two primes at random -p, q•select either eor dand compute the other•primes p,qmust not be easily derived from modulus n=p.q•means must be sufficiently large•typically guess and use probabilistic test•exponents e, dare inverses, so use Inverse algorithm to compute the other\n\n[Slide 1]:\nAvailability•Availability: Assures that systems work promptly, and service is not denied to authorized users, ensuring timelyand reliableaccess to and use of information•i.e., denial of service attack\n\nOther security requirements•Authenticity•Accountability•tracible data source, •fault isolation•intrusion detection and prevention, •recovery and legal action•system must keep records of their activities to permit later forensic analysis to trace security breaches or to aid in transaction disputes\n\nQuestion•What security requirements does a blockchain system have achieved? \n\n\nA Hyperledger\n\n[Slide 6]:\nFeistel Encryption and Decryption \n\n\nDES encryption\n•64 bits plaintext•56 bits effectivekey length\n\nDES Weakness•short length key (56 bits) is not secure enough. Brutal force search takes short time. \n\nTriple DES (3DES)\nDecrypting with the wrong key will further convolute the output\n\n3DES•Triple DES with three different keys –brute-force complexity 2168•3DES is the FIPS-approved symmetric encryption algorithm•Weakness: slow speed for encryption\nFIPS – Federal Information Processing Standards. The United States' Federal Information Processing Standards are publicly announced standards developed by the National Institute of Standards and Technology for use in computer systems by non-military American government agencies and government contractors\n\nAES•clearly a replacement for DES was needed•have theoretical attacks that can break it•have demonstrated exhaustive key search attacks•can use Triple-DES –but slow with small blocks•US NIST issued call for ciphers in 1997•15 candidates accepted in Jun 98 •5 were short-listed in Aug-99 •Rijndael was selected as the AES in Oct-2000•issued as FIPS PUB 197 standard in Nov-2001 \n\nCriteria to evaluate AES•General security•Software implementations•Restricted-space environments•Hardware implementations•Attacks on implementations•Encryption versus decryption•Key agility•Other versatility and flexibility•Potential for instruction-level parallelismCryptographic Standards and Guidelines | CSRC (nist.gov)",
+    "content_length": 3369,
+    "word_count": 431,
+    "truncated": false
+  },
+  "citations": {
+    "total_count": 3,
+    "all_citations": [
+      {
+        "source_file": "Lecture 13_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 13,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 13"
+      },
+      {
+        "source_file": "Lecture 1_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 1,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 1"
+      },
+      {
+        "source_file": "Lecture 6_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 6,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 6"
+      }
+    ],
+    "chunk_citations": [
+      {
+        "chunk_number": 1,
+        "citation": {
+          "source_file": "Lecture 13_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 13,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 13"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 2,
+        "citation": {
+          "source_file": "Lecture 1_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 1,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 1"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 3,
+        "citation": {
+          "source_file": "Lecture 6_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 6,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 6"
+        },
+        "distance": null
+      }
+    ]
+  }
+}

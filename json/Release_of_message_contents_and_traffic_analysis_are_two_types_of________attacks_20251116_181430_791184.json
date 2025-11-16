@@ -1,0 +1,128 @@
+{
+  "timestamp": "2025-11-16T18:14:30.791231",
+  "question": "Release of message contents and traffic analysis are two types of ______ attacks.",
+  "search_query": "Release of message contents and traffic analysis are two types of ______ attacks Release of message contents and traffic analysis are two types of ______ attacks.",
+  "retrieved_documents_count": 3,
+  "documents": [
+    {
+      "chunk_number": 1,
+      "content": "Passive attack•i.e.eavesdropping on or monitoring of transmissions•Goal: obtain information being transmitted•release of message contents•traffic analysis –a promiscuous sniffer•Very difficult to detect –no alteration of the data•But easy to prevent, why?\n\nActive attack•active attack includes:•replay•Modification of messages•Denial of service•Masquerade\n\nExample: two points communication •Generic types of attacks\nEavedropping\n\nExample of modification attack in 6LoWPAN\n\n\nExample: a group of attackers\n\n\nKnow Your Threat Model•Threat model:A model of who your attacker is and what resources they have•One of the best ways to counter an attacker is to attack their reasons\n\nExample: adversary model•“The adversary is assumed to be intelligent and has limited number of resources. Before capturing the nodes, it exploits the various vulnerabilities of the networks. It knows the topology of the network, routing information. It aims to capture the sink node so as todisrupt the whole traffic. If it is not able tocapture the sink node, it will capture the nearby nodes of the sink. It tries to disrupt the whole traffic of the network with minimum number of captured nodes.”",
+      "content_length": 1175,
+      "metadata": {
+        "document_type": "pdf",
+        "source_file": "Lecture 2_slides.pdf",
+        "collection_name": "batch_1763296567",
+        "slide_number": 2,
+        "chunk_index": 1
+      },
+      "citation": {
+        "source_file": "Lecture 2_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 2,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 2"
+      },
+      "human_readable_label": "Slide 2"
+    },
+    {
+      "chunk_number": 2,
+      "content": "OSI Security ArchitectureAttackModel\n\nOSI Security Architecture•International Telecommunication Union –Telecommunication (ITU-T) recommends X.800•Security Architecture for Open Systems Interconnection (OSI)•Defines a systematic way of defining and providing security requirements•An international standardSecurity attacksSecurity mechanismsSecurity servicesa process (or a device incorporating such a process) to detect, prevent, or recover from an attackenhances the security of the data processing systems and the information transfers, such as policies\n\nOther Security Architectures•NIST, Cybersecurity Framework (CSF)•https://www.nist.gov/cyberframework•VIRTUAL WORKSHOP #2| February 15, 2023 (9:00 AM –5:30 PM EST). Discuss potential significant updates to the CSF •https://www.nist.gov/news-events/events/2023/02/journey-nist-cybersecurity-framework-csf-20-workshop-2•OWASP -Open Web Application Security Project•Web application security•OWASP Application Security Verification Standard (ASVS) -https://owasp.org/www-project-application-security-verification-standard/•OWASP Web Security Testing -https://owasp.org/www-project-web-security-testing-guide/•OWASP foundation\n\nSecurity attack•Definition: any action that compromises the security of information owned by an organization•Two types of security attacks•Passive attack•Active attack",
+      "content_length": 1346,
+      "metadata": {
+        "chunk_index": 0,
+        "collection_name": "batch_1763296567",
+        "slide_number": 2,
+        "document_type": "pdf",
+        "source_file": "Lecture 2_slides.pdf"
+      },
+      "citation": {
+        "source_file": "Lecture 2_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 2,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 2"
+      },
+      "human_readable_label": "Slide 2"
+    },
+    {
+      "chunk_number": 3,
+      "content": "Analysis of DHKE -Attack•Adversary gets 𝑞,𝛼,𝑌,, 𝑌-.•She needs to compute either 𝑋,or 𝑋-=𝑑𝑙𝑜𝑔.,0𝑌-•Secure?\n\nDiscrete Log ProblemCryptographic assumptions:•Discrete logarithm problem(discrete log problem): Given 𝛼,𝑞,𝛼!!𝑚𝑜𝑑𝑞for random 𝑋,, it is computationally hard to find 𝑋,•Diffie-Hellman assumption: Given𝛼,𝑞,𝛼!!𝑚𝑜𝑑𝑞,and 𝛼!\"𝑚𝑜𝑑𝑞for random𝑋,, 𝑋-, no polynomial time attacker can distinguish between a random value R and 𝛼!!!\"𝑚𝑜𝑑𝑞.•Intuition: The best knownalgorithm is to first calculate 𝑋\"and then compute (𝛼#!)#\"𝑚𝑜𝑑𝑞, but this requires solving the discrete log problem, which is hard!•Note: Multiplying the values doesn’t work, since you get 𝛼!!1!\"𝑚𝑜𝑑𝑝≠𝛼!!!\"𝑚𝑜𝑑𝑝\n\nEphemerality of Diffie-Hellman•Diffie-Hellman can be used ephemerally (called Diffie-Hellman ephemeral, or DHE)•Ephemeral: Short-term and temporary, not permanent•Alice and Bob discard 𝑋\",𝑋$and 𝐾=𝛼#\"#!𝑚𝑜𝑑𝑞when they’re done•Because you need 𝑋\"and 𝑋$to derive 𝐾, you can never derive 𝐾again!•Sometimes 𝐾is called a session key, because it’s only used for an ephemeral session•Eve can’t decrypt any messages she recorded: Nobody saved 𝑋,,𝑋-or 𝐾, and her recording only has 𝛼!!𝑚𝑜𝑑𝑞and 𝛼!\"𝑚𝑜𝑑𝑞!     \n\nDiffie-Hellman is susceptible to man-in-the-middle attacks•David can alter messages, block messages, and send her own messages•DH is notsecure against a MITM attacker: David can just do a DH with both sides!\n\nDiffie-Hellman: Security",
+      "content_length": 1395,
+      "metadata": {
+        "slide_number": 24,
+        "document_type": "pdf",
+        "source_file": "Lecture 24_slides.pdf",
+        "chunk_index": 1,
+        "collection_name": "batch_1763296567"
+      },
+      "citation": {
+        "source_file": "Lecture 24_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 24,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 24"
+      },
+      "human_readable_label": "Slide 24"
+    }
+  ],
+  "context": {
+    "formatted_content": "[Slide 2]:\nPassive attack•i.e.eavesdropping on or monitoring of transmissions•Goal: obtain information being transmitted•release of message contents•traffic analysis –a promiscuous sniffer•Very difficult to detect –no alteration of the data•But easy to prevent, why?\n\nActive attack•active attack includes:•replay•Modification of messages•Denial of service•Masquerade\n\nExample: two points communication •Generic types of attacks\nEavedropping\n\nExample of modification attack in 6LoWPAN\n\n\nExample: a group of attackers\n\n\nKnow Your Threat Model•Threat model:A model of who your attacker is and what resources they have•One of the best ways to counter an attacker is to attack their reasons\n\nExample: adversary model•“The adversary is assumed to be intelligent and has limited number of resources. Before capturing the nodes, it exploits the various vulnerabilities of the networks. It knows the topology of the network, routing information. It aims to capture the sink node so as todisrupt the whole traffic. If it is not able tocapture the sink node, it will capture the nearby nodes of the sink. It tries to disrupt the whole traffic of the network with minimum number of captured nodes.”\n\n[Slide 2]:\nOSI Security ArchitectureAttackModel\n\nOSI Security Architecture•International Telecommunication Union –Telecommunication (ITU-T) recommends X.800•Security Architecture for Open Systems Interconnection (OSI)•Defines a systematic way of defining and providing security requirements•An international standardSecurity attacksSecurity mechanismsSecurity servicesa process (or a device incorporating such a process) to detect, prevent, or recover from an attackenhances the security of the data processing systems and the information transfers, such as policies\n\nOther Security Architectures•NIST, Cybersecurity Framework (CSF)•https://www.nist.gov/cyberframework•VIRTUAL WORKSHOP #2| February 15, 2023 (9:00 AM –5:30 PM EST). Discuss potential significant updates to the CSF •https://www.nist.gov/news-events/events/2023/02/journey-nist-cybersecurity-framework-csf-20-workshop-2•OWASP -Open Web Application Security Project•Web application security•OWASP Application Security Verification Standard (ASVS) -https://owasp.org/www-project-application-security-verification-standard/•OWASP Web Security Testing -https://owasp.org/www-project-web-security-testing-guide/•OWASP foundation\n\nSecurity attack•Definition: any action that compromises the security of information owned by an organization•Two types of security attacks•Passive attack•Active attack\n\n[Slide 24]:\nAnalysis of DHKE -Attack•Adversary gets 𝑞,𝛼,𝑌,, 𝑌-.•She needs to compute either 𝑋,or 𝑋-=𝑑𝑙𝑜𝑔.,0𝑌-•Secure?\n\nDiscrete Log ProblemCryptographic assumptions:•Discrete logarithm problem(discrete log problem): Given 𝛼,𝑞,𝛼!!𝑚𝑜𝑑𝑞for random 𝑋,, it is computationally hard to find 𝑋,•Diffie-Hellman assumption: Given𝛼,𝑞,𝛼!!𝑚𝑜𝑑𝑞,and 𝛼!\"𝑚𝑜𝑑𝑞for random𝑋,, 𝑋-, no polynomial time attacker can distinguish between a random value R and 𝛼!!!\"𝑚𝑜𝑑𝑞.•Intuition: The best knownalgorithm is to first calculate 𝑋\"and then compute (𝛼#!)#\"𝑚𝑜𝑑𝑞, but this requires solving the discrete log problem, which is hard!•Note: Multiplying the values doesn’t work, since you get 𝛼!!1!\"𝑚𝑜𝑑𝑝≠𝛼!!!\"𝑚𝑜𝑑𝑝\n\nEphemerality of Diffie-Hellman•Diffie-Hellman can be used ephemerally (called Diffie-Hellman ephemeral, or DHE)•Ephemeral: Short-term and temporary, not permanent•Alice and Bob discard 𝑋\",𝑋$and 𝐾=𝛼#\"#!𝑚𝑜𝑑𝑞when they’re done•Because you need 𝑋\"and 𝑋$to derive 𝐾, you can never derive 𝐾again!•Sometimes 𝐾is called a session key, because it’s only used for an ephemeral session•Eve can’t decrypt any messages she recorded: Nobody saved 𝑋,,𝑋-or 𝐾, and her recording only has 𝛼!!𝑚𝑜𝑑𝑞and 𝛼!\"𝑚𝑜𝑑𝑞!     \n\nDiffie-Hellman is susceptible to man-in-the-middle attacks•David can alter messages, block messages, and send her own messages•DH is notsecure against a MITM attacker: David can just do a DH with both sides!\n\nDiffie-Hellman: Security",
+    "content_length": 3954,
+    "word_count": 479,
+    "truncated": false
+  },
+  "citations": {
+    "total_count": 2,
+    "all_citations": [
+      {
+        "source_file": "Lecture 2_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 2,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 2"
+      },
+      {
+        "source_file": "Lecture 24_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 24,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 24"
+      }
+    ],
+    "chunk_citations": [
+      {
+        "chunk_number": 1,
+        "citation": {
+          "source_file": "Lecture 2_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 2,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 2"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 2,
+        "citation": {
+          "source_file": "Lecture 2_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 2,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 2"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 3,
+        "citation": {
+          "source_file": "Lecture 24_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 24,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 24"
+        },
+        "distance": null
+      }
+    ]
+  }
+}

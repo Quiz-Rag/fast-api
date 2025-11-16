@@ -1,0 +1,759 @@
+{
+  "timestamp": "2025-11-16T16:48:04.535969",
+  "question": "WHAT IS RSA ENCRYPTION?",
+  "search_query": "RSA encryption WHAT IS RSA ENCRYPTION WHAT IS RSA ENCRYPTION?",
+  "retrieved_documents_count": 18,
+  "documents": [
+    {
+      "chunk_number": 1,
+      "content": "Quantum-Computing and the Security Challenge•Quantum computers threaten RSA, ECC, and DH schemes (Shor’s and Grover’s algorithms). Once large-scale quantum computers are built, they will be capable of breaking most exis1ng public-key cryptosystems.•This poses a serious threat to the conﬁden1ality and integrity of Internet communica1ons.",
+      "content_length": 338,
+      "metadata": {
+        "chunk_index": 0,
+        "collection_name": "batch_1763293476",
+        "document_type": "pdf",
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "page_number": 3
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 3,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 3 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 3"
+    },
+    {
+      "chunk_number": 2,
+      "content": "Industry Migration Status•OpenSSLbegan introducing post-quantum cryptography algorithms starting with version 3.0, providing support for schemes such as Kyberand Dilithium.•OpenSSH (Key Exchange) has rapidly moved to adopt NIST-standardized Post-Quantum Key Exchange (PQC KEX) to secure remote access protocols in version 9.9.•The Hybrid Approach combines a classical algorithm with a PQC algorithm for defense-in-depth:•Mechanism:mlkem768x25519-sha256•Classical: X25519 (Traditional ECDH)•PQC: ML-KEM (Kyber)•In version 10.0, this hybrid method was made the defaultkey exchange mechanism.",
+      "content_length": 589,
+      "metadata": {
+        "page_number": 14,
+        "document_type": "pdf",
+        "collection_name": "batch_1763293476",
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "chunk_index": 0
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 14,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 14 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 14"
+    },
+    {
+      "chunk_number": 3,
+      "content": "An Introduction to Post-Quantum Cryptography ",
+      "content_length": 45,
+      "metadata": {
+        "chunk_index": 0,
+        "document_type": "pdf",
+        "collection_name": "batch_1763293476",
+        "page_number": 1,
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 1,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 1 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 1"
+    },
+    {
+      "chunk_number": 4,
+      "content": "Performance on Digital Signature•The performance of PQC algorithms is so poor that their practical deployment often encounters resistance from vendors.•Transition challenges:•Larger key sizes, slower performance•Integration into TLS, VPNs, IoT devices•However, growing security demands compel continued exploration and development of these algorithms.•Harvest-Now-Decrypt-Later\ntraditional algorithms (\n❌), \n✅ standardized, \n📝 soon-to-be standardized, or \n🤔 still candidateshttps://blog.cloudflare.com/another-look-at-pq-signatures/",
+      "content_length": 532,
+      "metadata": {
+        "document_type": "pdf",
+        "collection_name": "batch_1763293476",
+        "chunk_index": 0,
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "page_number": 13
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 13,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 13 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 13"
+    },
+    {
+      "chunk_number": 5,
+      "content": "The Learning With Errors (LWE) ProblemLWE can be thought of as a “noisy system of linear equations”that’s hard to solve.Suppose you are given a set of linear equations:If there’s no noise, solving for s (the secret vector) is easy –just linear algebra.But in LWE, we add small random noise to each equation:Where A is known matrix (public), s is secret vector (unknown), e is small random “error” vector (noise), q is a modulus (a large prime or power of 2)  •Given,only(A,b),itbecomescomputationallyinfeasibletorecovers–NP-hard   •While LWE is secure, it’s computationally heavy—operations on large matrices and vectors are expensive.      \n",
+      "content_length": 642,
+      "metadata": {
+        "document_type": "pdf",
+        "chunk_index": 0,
+        "collection_name": "batch_1763293476",
+        "page_number": 8,
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 8,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 8 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 8"
+    },
+    {
+      "chunk_number": 6,
+      "content": "Post-Quantum Cryptography (PQC)•Goal:Develop cryptographic systems secure against both quantum and classical attacks.•Must interoperate with existing protocols and networksto ensure a smooth transition.•Be executable on all devices (e.g.classical computers, mobile phone, sensors). This is the difference between PQC and the separate field of quantum cryptography. •PQC is a proactive defense—anticipating quantum capabilities before they arrive.",
+      "content_length": 446,
+      "metadata": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "chunk_index": 0,
+        "page_number": 4,
+        "collection_name": "batch_1763293476",
+        "document_type": "pdf"
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 4,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 4 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 4"
+    },
+    {
+      "chunk_number": 7,
+      "content": "Ring-LWE (R-LWE) —The Optimized VersionRing-LWEis a more efficient variantthat replaces vectors and matrices with polynomials.Wherea(x),s(x),e(x)arepolynomials withsmallinteger coefficients. f(x) is a fixed modulus polynomial (e.g.𝑥!+ 1). •Alloperationsarepolynomialarithmetic,whichcanbecomputedefficientlyusingfastFourier transforms (FFT). •Application: 1. CRYSTALS-Kyber(encryption/ key exchange)2. CRYSTALS-Dilithium(digital signature)\n",
+      "content_length": 439,
+      "metadata": {
+        "chunk_index": 0,
+        "document_type": "pdf",
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "page_number": 9,
+        "collection_name": "batch_1763293476"
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 9,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 9 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 9"
+    },
+    {
+      "chunk_number": 8,
+      "content": "CRYSTALS-KyberCryptography•Let                                      be a ring\nCRYSTALS-Kyber, Martin Strand, Nov. 2023, https://www.uio.no/studier/emner/matnat/its/TEK4500/h23/lectures/lecture-14---crystals-kyber-(guest-lecture-martin-strand).pdf\n",
+      "content_length": 247,
+      "metadata": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "page_number": 11,
+        "document_type": "pdf",
+        "collection_name": "batch_1763293476",
+        "chunk_index": 0
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 11,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 11 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 11"
+    },
+    {
+      "chunk_number": 9,
+      "content": "Reading Materials•PQCrypto: post-quantum cryptography conference series. https://pqcrypto.org/conferences.html•Chen, Lily, et al.Report on post-quantum cryptography. Vol. 12. Gaithersburg, MD, USA: US Department of Commerce, National Institute of Standards and Technology (NIST), https://nvlpubs.nist.gov/nistpubs/ir/2016/NIST.IR.8105.pdf?ref=suddo.de•FIPS 203–205 Documents –csrc.nist.gov•Joseph, David, et al. \"Transitioning organizations to post-quantum cryptography.\"Nature605.7909 (2022): 237-243.https://www.nature.com/articles/s41586-022-04623-2•A. Aydeger, etc. “Towards a Quantum-Resilient Future: Strategies for Transitioning to Post-Quantum Cryptography”,2024 https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10741441",
+      "content_length": 732,
+      "metadata": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "collection_name": "batch_1763293476",
+        "chunk_index": 0,
+        "page_number": 16
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 16,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 16 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 16"
+    },
+    {
+      "chunk_number": 10,
+      "content": "Open-Source PQC Repository•The Open Quantum Safe (OQS)project, specifically its liboqslibrary, is a core force in the open-source PQC space. It is now part of the Linux Foundation's Post-Quantum Cryptography Alliance (PQCA).•open-quantum-safe/liboqs. https://openquantumsafe.org/•liboqsintegrates various quantum-resistant Key-Encapsulation Mechanisms (KEMs)and digital signature algorithms. It supports the algorithms selected by NIST, such as ML-KEM (Kyber), ML-DSA (Dilithium), SLH-DSA (SPHINCS+), and Falcon. Furthermore, it includes candidate algorithms from the NIST Fourth Round evaluation, as well as other promising schemes.•liboqsprovides a unified APIinterface, making it easy for developers to switch between different algorithms. The project also includes a test toolsetand performance benchmarkingprograms, along with wrappers for multiple programming languages (e.g., Java, Python, Rust, Go) and integration solutions for common applications like OpenSSL.",
+      "content_length": 970,
+      "metadata": {
+        "document_type": "pdf",
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "collection_name": "batch_1763293476",
+        "page_number": 15,
+        "chunk_index": 0
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 15,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 15 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 15"
+    },
+    {
+      "chunk_number": 11,
+      "content": "NIST PQC Standards •PQC algorithms that NIST has finalized for standardization (as of Aug. 2024) include:•FIPS 203 ML-KEM:Module-Lattice-Based Key-Encapsulation Mechanism Standard -Derived from CRYSTALS-Kyber•FIPS 204 ML-DSA:Module-Lattice-Based Digital Signature Standard -Derived from CRYSTALS-Dilithium•FIPS 205 SLH-DSA:Stateless Hash-Based Digital Signature Standard -Derived from SPHINCS+",
+      "content_length": 393,
+      "metadata": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "chunk_index": 0,
+        "collection_name": "batch_1763293476",
+        "page_number": 6,
+        "document_type": "pdf"
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 6,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 6 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 6"
+    },
+    {
+      "chunk_number": 12,
+      "content": "LaCce-BasedPost Quantum Cryptography•A latticeis a regular grid of points in multi-dimensional space, defined by integer combinations of basis vectors (linear independent, no need orthogonal).•Core Hard Problems (hard for both classical and quantum computers)•Shortest Vector Problem (SVP):Find the shortest nonzero vector in a lattice —extremely hard in high dimensions.•Closest Vector Problem (CVP):Given a random point, find the closest lattice point —also very hard.•Learning With Errors (LWE) / Ring-LWE Problem:Recover a hidden vector from noisy linear equations —believed to be hard even for quantum computers.•Most modern lattice-based cryptosystems are built on LWE or Ring-LWE.\n",
+      "content_length": 688,
+      "metadata": {
+        "chunk_index": 0,
+        "page_number": 7,
+        "collection_name": "batch_1763293476",
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf"
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 7,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 7 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 7"
+    },
+    {
+      "chunk_number": 13,
+      "content": "PQC algorithms familiesFamilyCore Math IdeaExample AlgorithmsAnalogy / Teaching AidLattice-basedHardness of finding short vectors in high-dimensional latticesKyber, Dilithium, NTRU“Finding the shortest straw in a 1000D haystack”Code-basedError correction in random linear codesClassic McEliece“Guessing errors in noisy messages”MultivariateSolving nonlinear polynomial equationsRainbow, GeMSS“Jigsaw puzzles of equations”Hash-basedSecurity from hash preimage resistanceSPHINCS+“Digital signatures built purely from hashes”Isogeny-basedStructure of elliptic curves and their mappingsSIKE (broken in 2022)“Paths between geometric shapes”",
+      "content_length": 635,
+      "metadata": {
+        "chunk_index": 0,
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "collection_name": "batch_1763293476",
+        "document_type": "pdf",
+        "page_number": 5
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 5,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 5 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 5"
+    },
+    {
+      "chunk_number": 14,
+      "content": "Objective of this lecture•Not for math understanding and theore1cal depth.•But for future implementa1on and applica1on of QPC in your professional works and research. ",
+      "content_length": 167,
+      "metadata": {
+        "collection_name": "batch_1763293476",
+        "document_type": "pdf",
+        "page_number": 2,
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "chunk_index": 0
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 2,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 2 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 2"
+    },
+    {
+      "chunk_number": 15,
+      "content": "Polynomial Ring with a Modulus: Used in Kyber\n",
+      "content_length": 46,
+      "metadata": {
+        "page_number": 10,
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "chunk_index": 0,
+        "collection_name": "batch_1763293476",
+        "document_type": "pdf"
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 10,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 10 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 10"
+    },
+    {
+      "chunk_number": 16,
+      "content": "Correctness\n",
+      "content_length": 12,
+      "metadata": {
+        "document_type": "pdf",
+        "chunk_index": 0,
+        "page_number": 12,
+        "collection_name": "batch_1763293476",
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 12,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 12 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 12"
+    },
+    {
+      "chunk_number": 17,
+      "content": "•Thank you!",
+      "content_length": 11,
+      "metadata": {
+        "chunk_index": 0,
+        "collection_name": "batch_1763293476",
+        "document_type": "pdf",
+        "page_number": 18,
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 18,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 18 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 18"
+    },
+    {
+      "chunk_number": 18,
+      "content": "Review class & quiz 3•Monday (Dec. 1) after Thanksgiving. •Content: Chapter 4 (excluding PQC)•No class on Dec. 3 (Wednesday)",
+      "content_length": 124,
+      "metadata": {
+        "page_number": 17,
+        "chunk_index": 0,
+        "collection_name": "batch_1763293476",
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf"
+      },
+      "citation": {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 17,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 17 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      "human_readable_label": "Lecture 29, Page 17"
+    }
+  ],
+  "context": {
+    "formatted_content": "[Lecture 29, Page 3]:\nQuantum-Computing and the Security Challenge•Quantum computers threaten RSA, ECC, and DH schemes (Shor’s and Grover’s algorithms). Once large-scale quantum computers are built, they will be capable of breaking most exis1ng public-key cryptosystems.•This poses a serious threat to the conﬁden1ality and integrity of Internet communica1ons.\n\n[Lecture 29, Page 14]:\nIndustry Migration Status•OpenSSLbegan introducing post-quantum cryptography algorithms starting with version 3.0, providing support for schemes such as Kyberand Dilithium.•OpenSSH (Key Exchange) has rapidly moved to adopt NIST-standardized Post-Quantum Key Exchange (PQC KEX) to secure remote access protocols in version 9.9.•The Hybrid Approach combines a classical algorithm with a PQC algorithm for defense-in-depth:•Mechanism:mlkem768x25519-sha256•Classical: X25519 (Traditional ECDH)•PQC: ML-KEM (Kyber)•In version 10.0, this hybrid method was made the defaultkey exchange mechanism.\n\n[Lecture 29, Page 1]:\nAn Introduction to Post-Quantum Cryptography \n\n[Lecture 29, Page 13]:\nPerformance on Digital Signature•The performance of PQC algorithms is so poor that their practical deployment often encounters resistance from vendors.•Transition challenges:•Larger key sizes, slower performance•Integration into TLS, VPNs, IoT devices•However, growing security demands compel continued exploration and development of these algorithms.•Harvest-Now-Decrypt-Later\ntraditional algorithms (\n❌), \n✅ standardized, \n📝 soon-to-be standardized, or \n🤔 still candidateshttps://blog.cloudflare.com/another-look-at-pq-signatures/\n\n[Lecture 29, Page 8]:\nThe Learning With Errors (LWE) ProblemLWE can be thought of as a “noisy system of linear equations”that’s hard to solve.Suppose you are given a set of linear equations:If there’s no noise, solving for s (the secret vector) is easy –just linear algebra.But in LWE, we add small random noise to each equation:Where A is known matrix (public), s is secret vector (unknown), e is small random “error” vector (noise), q is a modulus (a large prime or power of 2)  •Given,only(A,b),itbecomescomputationallyinfeasibletorecovers–NP-hard   •While LWE is secure, it’s computationally heavy—operations on large matrices and vectors are expensive.      \n\n\n[Lecture 29, Page 4]:\nPost-Quantum Cryptography (PQC)•Goal:Develop cryptographic systems secure against both quantum and classical attacks.•Must interoperate with existing protocols and networksto ensure a smooth transition.•Be executable on all devices (e.g.classical computers, mobile phone, sensors). This is the difference between PQC and the separate field of quantum cryptography. •PQC is a proactive defense—anticipating quantum capabilities before they arrive.\n\n[Lecture 29, Page 9]:\nRing-LWE (R-LWE) —The Optimized VersionRing-LWEis a more efficient variantthat replaces vectors and matrices with polynomials.Wherea(x),s(x),e(x)arepolynomials withsmallinteger coefficients. f(x) is a fixed modulus polynomial (e.g.𝑥!+ 1). •Alloperationsarepolynomialarithmetic,whichcanbecomputedefficientlyusingfastFourier transforms (FFT). •Application: 1. CRYSTALS-Kyber(encryption/ key exchange)2. CRYSTALS-Dilithium(digital signature)\n\n\n[Lecture 29, Page 11]:\nCRYSTALS-KyberCryptography•Let                                      be a ring\nCRYSTALS-Kyber, Martin Strand, Nov. 2023, https://www.uio.no/studier/emner/matnat/its/TEK4500/h23/lectures/lecture-14---crystals-kyber-(guest-lecture-martin-strand).pdf\n\n\n[Lecture 29, Page 16]:\nReading Materials•PQCrypto: post-quantum cryptography conference series. https://pqcrypto.org/conferences.html•Chen, Lily, et al.Report on post-quantum cryptography. Vol. 12. Gaithersburg, MD, USA: US Department of Commerce, National Institute of Standards and Technology (NIST), https://nvlpubs.nist.gov/nistpubs/ir/2016/NIST.IR.8105.pdf?ref=suddo.de•FIPS 203–205 Documents –csrc.nist.gov•Joseph, David, et al. \"Transitioning organizations to post-quantum cryptography.\"Nature605.7909 (2022): 237-243.https://www.nature.com/articles/s41586-022-04623-2•A. Aydeger, etc. “Towards a Quantum-Resilient Future: Strategies for Transitioning to Post-Quantum Cryptography”,2024 https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10741441\n\n[Lecture 29, Page 15]:\nOpen-Source PQC Repository•The Open Quantum Safe (OQS)project, specifically its liboqslibrary, is a core force in the open-source PQC space. It is now part of the Linux Foundation's Post-Quantum Cryptography Alliance (PQCA).•open-quantum-safe/liboqs. https://openquantumsafe.org/•liboqsintegrates various quantum-resistant Key-Encapsulation Mechanisms (KEMs)and digital signature algorithms. It supports the algorithms selected by NIST, such as ML-KEM (Kyber), ML-DSA (Dilithium), SLH-DSA (SPHINCS+), and Falcon. Furthermore, it includes candidate algorithms from the NIST Fourth Round evaluation, as well as other promising schemes.•liboqsprovides a unified APIinterface, making it easy for developers to switch between different algorithms. The project also includes a test toolsetand performance benchmarkingprograms, along with wrappers for multiple programming languages (e.g., Java, Python, Rust, Go) and integration solutions for common applications like OpenSSL.\n\n[Lecture 29, Page 6]:\nNIST PQC Standards •PQC algorithms that NIST has finalized for standardization (as of Aug. 2024) include:•FIPS 203 ML-KEM:Module-Lattice-Based Key-Encapsulation Mechanism Standard -Derived from CRYSTALS-Kyber•FIPS 204 ML-DSA:Module-Lattice-Based Digital Signature Standard -Derived from CRYSTALS-Dilithium•FIPS 205 SLH-DSA:Stateless Hash-Based Digital Signature Standard -Derived from SPHINCS+\n\n[Lecture 29, Page 7]:\nLaCce-BasedPost Quantum Cryptography•A latticeis a regular grid of points in multi-dimensional space, defined by integer combinations of basis vectors (linear independent, no need orthogonal).•Core Hard Problems (hard for both classical and quantum computers)•Shortest Vector Problem (SVP):Find the shortest nonzero vector in a lattice —extremely hard in high dimensions.•Closest Vector Problem (CVP):Given a random point, find the closest lattice point —also very hard.•Learning With Errors (LWE) / Ring-LWE Problem:Recover a hidden vector from noisy linear equations —believed to be hard even for quantum computers.•Most modern lattice-based cryptosystems are built on LWE or Ring-LWE.\n\n\n[Lecture 29, Page 5]:\nPQC algorithms familiesFamilyCore Math IdeaExample AlgorithmsAnalogy / Teaching AidLattice-basedHardness of finding short vectors in high-dimensional latticesKyber, Dilithium, NTRU“Finding the shortest straw in a 1000D haystack”Code-basedError correction in random linear codesClassic McEliece“Guessing errors in noisy messages”MultivariateSolving nonlinear polynomial equationsRainbow, GeMSS“Jigsaw puzzles of equations”Hash-basedSecurity from hash preimage resistanceSPHINCS+“Digital signatures built purely from hashes”Isogeny-basedStructure of elliptic curves and their mappingsSIKE (broken in 2022)“Paths between geometric shapes”\n\n[Lecture 29, Page 2]:\nObjective of this lecture•Not for math understanding and theore1cal depth.•But for future implementa1on and applica1on of QPC in your professional works and research. \n\n[Lecture 29, Page 10]:\nPolynomial Ring with a Modulus: Used in Kyber\n\n\n[Lecture 29, Page 12]:\nCorrectness\n\n\n[Lecture 29, Page 18]:\n•Thank you!\n\n[Lecture 29, Page 17]:\nReview class & quiz 3•Monday (Dec. 1) after Thanksgiving. •Content: Chapter 4 (excluding PQC)•No class on Dec. 3 (Wednesday)",
+    "content_length": 7495,
+    "word_count": 858,
+    "truncated": false
+  },
+  "citations": {
+    "total_count": 18,
+    "all_citations": [
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 3,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 3 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 14,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 14 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 1,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 1 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 13,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 13 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 8,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 8 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 4,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 4 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 9,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 9 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 11,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 11 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 16,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 16 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 15,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 15 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 6,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 6 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 7,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 7 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 5,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 5 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 2,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 2 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 10,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 10 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 12,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 12 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 18,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 18 of 1763293476.573884_Lecture 29_slides.pdf"
+      },
+      {
+        "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "page_number": 17,
+        "slide_number": null,
+        "collection": "batch_1763293476",
+        "formatted": "Page 17 of 1763293476.573884_Lecture 29_slides.pdf"
+      }
+    ],
+    "chunk_citations": [
+      {
+        "chunk_number": 1,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 3,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 3 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 2,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 14,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 14 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 3,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 1,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 1 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 4,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 13,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 13 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 5,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 8,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 8 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 6,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 4,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 4 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 7,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 9,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 9 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 8,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 11,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 11 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 9,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 16,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 16 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 10,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 15,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 15 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 11,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 6,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 6 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 12,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 7,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 7 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 13,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 5,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 5 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 14,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 2,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 2 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 15,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 10,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 10 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 16,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 12,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 12 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 17,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 18,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 18 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 18,
+        "citation": {
+          "source_file": "1763293476.573884_Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "page_number": 17,
+          "slide_number": null,
+          "collection": "batch_1763293476",
+          "formatted": "Page 17 of 1763293476.573884_Lecture 29_slides.pdf"
+        },
+        "distance": null
+      }
+    ]
+  }
+}

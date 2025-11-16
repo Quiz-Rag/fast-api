@@ -1,0 +1,135 @@
+{
+  "timestamp": "2025-11-16T18:04:07.289877",
+  "question": "what is llm jailbreak?",
+  "search_query": "what is llm jailbreak what is llm jailbreak? what is 5 most valnerable algo for blockchain?",
+  "retrieved_documents_count": 3,
+  "documents": [
+    {
+      "chunk_number": 1,
+      "content": "Availability•Availability: Assures that systems work promptly, and service is not denied to authorized users, ensuring timelyand reliableaccess to and use of information•i.e., denial of service attack\n\nOther security requirements•Authenticity•Accountability•tracible data source, •fault isolation•intrusion detection and prevention, •recovery and legal action•system must keep records of their activities to permit later forensic analysis to trace security breaches or to aid in transaction disputes\n\nQuestion•What security requirements does a blockchain system have achieved? \n\n\nA Hyperledger",
+      "content_length": 593,
+      "metadata": {
+        "slide_number": 1,
+        "source_file": "Lecture 1_slides.pdf",
+        "chunk_index": 1,
+        "document_type": "pdf",
+        "collection_name": "batch_1763296567"
+      },
+      "citation": {
+        "source_file": "Lecture 1_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 1,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 1"
+      },
+      "human_readable_label": "Slide 1"
+    },
+    {
+      "chunk_number": 2,
+      "content": "LaCce-BasedPost Quantum Cryptography•A latticeis a regular grid of points in multi-dimensional space, defined by integer combinations of basis vectors (linear independent, no need orthogonal).•Core Hard Problems (hard for both classical and quantum computers)•Shortest Vector Problem (SVP):Find the shortest nonzero vector in a lattice —extremely hard in high dimensions.•Closest Vector Problem (CVP):Given a random point, find the closest lattice point —also very hard.•Learning With Errors (LWE) / Ring-LWE Problem:Recover a hidden vector from noisy linear equations —believed to be hard even for quantum computers.•Most modern lattice-based cryptosystems are built on LWE or Ring-LWE.\n\n\nThe Learning With Errors (LWE) ProblemLWE can be thought of as a “noisy system of linear equations”that’s hard to solve.Suppose you are given a set of linear equations:If there’s no noise, solving for s (the secret vector) is easy –just linear algebra.But in LWE, we add small random noise to each equation:Where A is known matrix (public), s is secret vector (unknown), e is small random “error” vector (noise), q is a modulus (a large prime or power of 2)  •Given,only(A,b),itbecomescomputationallyinfeasibletorecovers–NP-hard   •While LWE is secure, it’s computationally heavy—operations on large matrices and vectors are expensive.",
+      "content_length": 1325,
+      "metadata": {
+        "source_file": "Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 29,
+        "collection_name": "batch_1763296567",
+        "chunk_index": 2
+      },
+      "citation": {
+        "source_file": "Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 29,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 29"
+      },
+      "human_readable_label": "Slide 29"
+    },
+    {
+      "chunk_number": 3,
+      "content": "Means of User Authentication•Something the individual knows•password, PIN, answers to prearranged questions•Something the individual possesses•token: cryptographic keys, electronic keycards, smart cards, and physical keys•Something the individual is (static biometrics)•fingerprint, retina, and face•Something the individual does (dynamic biometrics)•voice pattern, handwriting characteristics, and typing rhythm\n\nNewsaboutBitcoins•In October 2025, the U.S. District Court for the Eastern District of New York disclosed an unprecedented case of cryptocurrency asset seizure: the U.S. government confiscated 127,271 bitcoins, worth about $15 billions at market price.•Root Cause: Weak Randomness in Key Generation:It argues the underlying vulnerability is not a broken algorithm per se, but the use of a non-cryptographically secure PRNGduring wallet/private-key generation. In particular, many“weak wallets” used the MT19937 (Mersenne Twister) generator with low entropy seeds, making private keys predictable. •Lesson: Ensuring Cryptographic Randomness (i.e.not use system time as seed). Randomness and Private Key Security is the Lifeline of the Blockchain WorldWhen Randomness Isn't So Random: The Truth Behind the Theft of 120,000 BTC, https://www.bitget.com/amp/news/detail/12560605022352",
+      "content_length": 1293,
+      "metadata": {
+        "collection_name": "batch_1763296567",
+        "document_type": "pdf",
+        "slide_number": 20,
+        "source_file": "Lecture 20_slides.pdf",
+        "chunk_index": 1
+      },
+      "citation": {
+        "source_file": "Lecture 20_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 20,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 20"
+      },
+      "human_readable_label": "Slide 20"
+    }
+  ],
+  "context": {
+    "formatted_content": "[Slide 1]:\nAvailability•Availability: Assures that systems work promptly, and service is not denied to authorized users, ensuring timelyand reliableaccess to and use of information•i.e., denial of service attack\n\nOther security requirements•Authenticity•Accountability•tracible data source, •fault isolation•intrusion detection and prevention, •recovery and legal action•system must keep records of their activities to permit later forensic analysis to trace security breaches or to aid in transaction disputes\n\nQuestion•What security requirements does a blockchain system have achieved? \n\n\nA Hyperledger\n\n[Slide 29]:\nLaCce-BasedPost Quantum Cryptography•A latticeis a regular grid of points in multi-dimensional space, defined by integer combinations of basis vectors (linear independent, no need orthogonal).•Core Hard Problems (hard for both classical and quantum computers)•Shortest Vector Problem (SVP):Find the shortest nonzero vector in a lattice —extremely hard in high dimensions.•Closest Vector Problem (CVP):Given a random point, find the closest lattice point —also very hard.•Learning With Errors (LWE) / Ring-LWE Problem:Recover a hidden vector from noisy linear equations —believed to be hard even for quantum computers.•Most modern lattice-based cryptosystems are built on LWE or Ring-LWE.\n\n\nThe Learning With Errors (LWE) ProblemLWE can be thought of as a “noisy system of linear equations”that’s hard to solve.Suppose you are given a set of linear equations:If there’s no noise, solving for s (the secret vector) is easy –just linear algebra.But in LWE, we add small random noise to each equation:Where A is known matrix (public), s is secret vector (unknown), e is small random “error” vector (noise), q is a modulus (a large prime or power of 2)  •Given,only(A,b),itbecomescomputationallyinfeasibletorecovers–NP-hard   •While LWE is secure, it’s computationally heavy—operations on large matrices and vectors are expensive.\n\n[Slide 20]:\nMeans of User Authentication•Something the individual knows•password, PIN, answers to prearranged questions•Something the individual possesses•token: cryptographic keys, electronic keycards, smart cards, and physical keys•Something the individual is (static biometrics)•fingerprint, retina, and face•Something the individual does (dynamic biometrics)•voice pattern, handwriting characteristics, and typing rhythm\n\nNewsaboutBitcoins•In October 2025, the U.S. District Court for the Eastern District of New York disclosed an unprecedented case of cryptocurrency asset seizure: the U.S. government confiscated 127,271 bitcoins, worth about $15 billions at market price.•Root Cause: Weak Randomness in Key Generation:It argues the underlying vulnerability is not a broken algorithm per se, but the use of a non-cryptographically secure PRNGduring wallet/private-key generation. In particular, many“weak wallets” used the MT19937 (Mersenne Twister) generator with low entropy seeds, making private keys predictable. •Lesson: Ensuring Cryptographic Randomness (i.e.not use system time as seed). Randomness and Private Key Security is the Lifeline of the Blockchain WorldWhen Randomness Isn't So Random: The Truth Behind the Theft of 120,000 BTC, https://www.bitget.com/amp/news/detail/12560605022352",
+    "content_length": 3250,
+    "word_count": 423,
+    "truncated": false
+  },
+  "citations": {
+    "total_count": 3,
+    "all_citations": [
+      {
+        "source_file": "Lecture 1_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 1,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 1"
+      },
+      {
+        "source_file": "Lecture 29_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 29,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 29"
+      },
+      {
+        "source_file": "Lecture 20_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 20,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 20"
+      }
+    ],
+    "chunk_citations": [
+      {
+        "chunk_number": 1,
+        "citation": {
+          "source_file": "Lecture 1_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 1,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 1"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 2,
+        "citation": {
+          "source_file": "Lecture 29_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 29,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 29"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 3,
+        "citation": {
+          "source_file": "Lecture 20_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 20,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 20"
+        },
+        "distance": null
+      }
+    ]
+  }
+}

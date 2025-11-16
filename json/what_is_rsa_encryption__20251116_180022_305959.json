@@ -1,0 +1,128 @@
+{
+  "timestamp": "2025-11-16T18:00:22.306027",
+  "question": "what is rsa encryption ?",
+  "search_query": "RSA encryption what is rsa encryption what is rsa encryption ?",
+  "retrieved_documents_count": 3,
+  "documents": [
+    {
+      "chunk_number": 1,
+      "content": "Public-Key Cryptography Algorithm(RSA)\n\nRSA Public-key encryption•by Rivest, Shamir & Adleman of MIT in 1977 •currently the “work horse” of Internet security•most public key infrastructure (PKI) products•SSL/TLS: certificates and key-exchange•secure e-mail: PGP , Outlook, ….•based on exponentiation in a finite (Galois) field over integers modulo a prime •exponentiation takes O((log n)3) operations (easy)•security due to cost of factoring large integer numbers •factorization takes O(e log n log log n) operations (hard)•uses large integers (eg.1024 bits)\n\nRSA key setup•each user generates a public/private key pair by: •selecting two large primes at random -p, q•computing their system modulus n=p!q•note ø(n)=(p-1)(q-1)•selecting at random the encryption key e•where 1<e<ø(n), gcd(e,ø(n))=1 •solve following equation to find decryption key d•ed=1 mod ø(n)•publish their public encryption key: pk={e,n} •keep secret private decryption key: sk={d,p,q} \n\n\nRSA key generation•users of RSA must:•determine two primes at random -p, q•select either eor dand compute the other•primes p,qmust not be easily derived from modulus n=p.q•means must be sufficiently large•typically guess and use probabilistic test•exponents e, dare inverses, so use Inverse algorithm to compute the other",
+      "content_length": 1280,
+      "metadata": {
+        "slide_number": 13,
+        "collection_name": "batch_1763296567",
+        "source_file": "Lecture 13_slides.pdf",
+        "chunk_index": 0,
+        "document_type": "pdf"
+      },
+      "citation": {
+        "source_file": "Lecture 13_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 13,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 13"
+      },
+      "human_readable_label": "Slide 13"
+    },
+    {
+      "chunk_number": 2,
+      "content": "RSA example1.Select primes: p=17 & q=112.Computen = pq=17×11=1873.Computeø(n)=(p–1)(q-1)=16×10=1604.Select e: gcd(e,160)=1; choose e=75.Determine d: de=1 mod 160and d < 160Value is d=23since 23×7=161= 10×160+16.Publish public key pk={7,187}7.Keep secret private key sk={23,17,11}\n\n\nRSA use•to encrypt a message M the sender:•obtains public keyof recipient pk={e,n}•computes: C=Memod n, where 0≤M<n•to decrypt the ciphertext C the owner:•uses their private key sk={d,p,q}•computes: M=Cdmod n•note that the message M must be smaller than the modulus n (block if needed)\nPlaintextCiphertextC = 𝑀!pk={e,n}sk={d,p,q}\n\nExample of RSA algorithm\n\n\nCorrectness of RSA•Euler’s theorem: if gcd(M, n) = 1, then 𝑀!(#)=1mod n. Here φ(n) is Euler’s totient function: the number of integers in {1, 2, . . .,n-1} which are relatively prime ton. Whennis a prime, this theorem is just Fermat’s little theorem\nM’ = 𝐶%mod\tn=𝑀&%\tmod n=\t𝑀(!#)*\tmod n=\t[𝑀!(#)](,𝑀\tmod\tn= M  mod n",
+      "content_length": 954,
+      "metadata": {
+        "chunk_index": 1,
+        "source_file": "Lecture 13_slides.pdf",
+        "collection_name": "batch_1763296567",
+        "slide_number": 13,
+        "document_type": "pdf"
+      },
+      "citation": {
+        "source_file": "Lecture 13_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 13,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 13"
+      },
+      "human_readable_label": "Slide 13"
+    },
+    {
+      "chunk_number": 3,
+      "content": "RSA reading materials•A Method for Obtaining Digital Signatures and Public-Key Cryptosystems\n\nHomomorphic encryption •Encryption scheme that allows computation on ciphertexts •an extension of public-key encryption scheme that allows anyone in possession of the public key to perform operations on encrypted data without access to the decryption key•Partially Homomorphic Encryption: Initial public-key systems that allow this for either addition or multiplication, but not both.•i.e. RSA•Fully homomorphic encryption (FHE)\n\nApplication of homomorphic encryption •One Use case: cloud computing •A weak computational device Alice (e.g., a mobile phone or a laptop) wishes to perform a computationally heavy task, beyond her computational means. She can delegate it to a much stronger (but still feasible) machine Bob (the cloud, or a supercomputer) who offers the service of doing so. The problem is that Alice does not trust Bob.\nE (Pk, data)E (Pk, f(data))",
+      "content_length": 956,
+      "metadata": {
+        "chunk_index": 1,
+        "source_file": "Lecture 14_slides.pdf",
+        "collection_name": "batch_1763296567",
+        "document_type": "pdf",
+        "slide_number": 14
+      },
+      "citation": {
+        "source_file": "Lecture 14_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 14,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 14"
+      },
+      "human_readable_label": "Slide 14"
+    }
+  ],
+  "context": {
+    "formatted_content": "[Slide 13]:\nPublic-Key Cryptography Algorithm(RSA)\n\nRSA Public-key encryption•by Rivest, Shamir & Adleman of MIT in 1977 •currently the “work horse” of Internet security•most public key infrastructure (PKI) products•SSL/TLS: certificates and key-exchange•secure e-mail: PGP , Outlook, ….•based on exponentiation in a finite (Galois) field over integers modulo a prime •exponentiation takes O((log n)3) operations (easy)•security due to cost of factoring large integer numbers •factorization takes O(e log n log log n) operations (hard)•uses large integers (eg.1024 bits)\n\nRSA key setup•each user generates a public/private key pair by: •selecting two large primes at random -p, q•computing their system modulus n=p!q•note ø(n)=(p-1)(q-1)•selecting at random the encryption key e•where 1<e<ø(n), gcd(e,ø(n))=1 •solve following equation to find decryption key d•ed=1 mod ø(n)•publish their public encryption key: pk={e,n} •keep secret private decryption key: sk={d,p,q} \n\n\nRSA key generation•users of RSA must:•determine two primes at random -p, q•select either eor dand compute the other•primes p,qmust not be easily derived from modulus n=p.q•means must be sufficiently large•typically guess and use probabilistic test•exponents e, dare inverses, so use Inverse algorithm to compute the other\n\n[Slide 13]:\nRSA example1.Select primes: p=17 & q=112.Computen = pq=17×11=1873.Computeø(n)=(p–1)(q-1)=16×10=1604.Select e: gcd(e,160)=1; choose e=75.Determine d: de=1 mod 160and d < 160Value is d=23since 23×7=161= 10×160+16.Publish public key pk={7,187}7.Keep secret private key sk={23,17,11}\n\n\nRSA use•to encrypt a message M the sender:•obtains public keyof recipient pk={e,n}•computes: C=Memod n, where 0≤M<n•to decrypt the ciphertext C the owner:•uses their private key sk={d,p,q}•computes: M=Cdmod n•note that the message M must be smaller than the modulus n (block if needed)\nPlaintextCiphertextC = 𝑀!pk={e,n}sk={d,p,q}\n\nExample of RSA algorithm\n\n\nCorrectness of RSA•Euler’s theorem: if gcd(M, n) = 1, then 𝑀!(#)=1mod n. Here φ(n) is Euler’s totient function: the number of integers in {1, 2, . . .,n-1} which are relatively prime ton. Whennis a prime, this theorem is just Fermat’s little theorem\nM’ = 𝐶%mod\tn=𝑀&%\tmod n=\t𝑀(!#)*\tmod n=\t[𝑀!(#)](,𝑀\tmod\tn= M  mod n\n\n[Slide 14]:\nRSA reading materials•A Method for Obtaining Digital Signatures and Public-Key Cryptosystems\n\nHomomorphic encryption •Encryption scheme that allows computation on ciphertexts •an extension of public-key encryption scheme that allows anyone in possession of the public key to perform operations on encrypted data without access to the decryption key•Partially Homomorphic Encryption: Initial public-key systems that allow this for either addition or multiplication, but not both.•i.e. RSA•Fully homomorphic encryption (FHE)\n\nApplication of homomorphic encryption •One Use case: cloud computing •A weak computational device Alice (e.g., a mobile phone or a laptop) wishes to perform a computationally heavy task, beyond her computational means. She can delegate it to a much stronger (but still feasible) machine Bob (the cloud, or a supercomputer) who offers the service of doing so. The problem is that Alice does not trust Bob.\nE (Pk, data)E (Pk, f(data))",
+    "content_length": 3230,
+    "word_count": 453,
+    "truncated": false
+  },
+  "citations": {
+    "total_count": 2,
+    "all_citations": [
+      {
+        "source_file": "Lecture 13_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 13,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 13"
+      },
+      {
+        "source_file": "Lecture 14_slides.pdf",
+        "document_type": "pdf",
+        "slide_number": 14,
+        "collection": "batch_1763296567",
+        "formatted": "Slide 14"
+      }
+    ],
+    "chunk_citations": [
+      {
+        "chunk_number": 1,
+        "citation": {
+          "source_file": "Lecture 13_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 13,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 13"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 2,
+        "citation": {
+          "source_file": "Lecture 13_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 13,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 13"
+        },
+        "distance": null
+      },
+      {
+        "chunk_number": 3,
+        "citation": {
+          "source_file": "Lecture 14_slides.pdf",
+          "document_type": "pdf",
+          "slide_number": 14,
+          "collection": "batch_1763296567",
+          "formatted": "Slide 14"
+        },
+        "distance": null
+      }
+    ]
+  }
+}
